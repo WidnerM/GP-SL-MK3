@@ -31,14 +31,15 @@ void LibMain::DisplayKnobs(SurfaceRow row)
         SetButtonRGBColor(MKIII_DISPLAY_DOWN_SYSEX, GetBankRGBColor(row, row.NextBank()));
 
         // check for the bank parameters (color, bank name / caption) on the bank select widget
+        // these serve as defaults, but will be overriden if a "p" widget exists for each individual widget
         widgetname = row.WidgetPrefix + "_" + row.BankIDs[row.ActiveBank] + "_i";
         if (widgetExists(widgetname))
         {
             Label = getWidgetCaption(widgetname);
-            BarColor = getWidgetFillColor(widgetname); // will use this for the bar and knob color
-            KnobColor = getWidgetOutlineColor(widgetname); // will use this for the bar and knob color
+            BarColor = getWidgetFillColor(widgetname);
+            KnobColor = getWidgetOutlineColor(widgetname);
 
-
+            // these are the two lines that will appear on the right display
             std::vector< std::string> name_segments = ParseWidgetName(Label, '_');
             (name_segments.size() >= 2) ? TextValue = name_segments[1] : TextValue = "";
             (name_segments.size() >= 1) ? Label = name_segments[0] : Label = "";
@@ -51,15 +52,13 @@ void LibMain::DisplayKnobs(SurfaceRow row)
         hexmessage += " 08 04 00 " + GPColorToSLColorHex(BarColor); // center left bar color
         hexmessage += " 08 01 01 " + textToHexString(TextValue.substr(0, 9)) + " 00";  // set Caption (2nd) line text
 
+        // build the sysex string for each individual knob
         for (x = 0; x <= 7; x++)
         {
             widgetname = row.WidgetPrefix + "_" + row.BankIDs[row.ActiveBank] + "_" + std::to_string(x);
             widget = PopulateWidget(widgetname);
             if (widget.IsSurfaceItemWidget)
             {
-                // Value = getWidgetValue(widgetname);
-                // Label = getWidgetCaption(widgetname);
-                // TextValue = getWidgetTextValue(widgetname);
 
                 Value = widget.Value;
                 Label = widget.Caption;
@@ -67,20 +66,8 @@ void LibMain::DisplayKnobs(SurfaceRow row)
                 BarColor = widget.RgbDimColor;
                 KnobColor = widget.RgbLitColor;
 
-                //   check for an extra parameter for knob color, for setting the knob color separate from the topbar and bank color
-                /*  if (widgetExists(widgetname + "_p"))
-                {
-                    Extras = getWidgetCaption(widgetname + "_p");
-                    std::vector< std::string> name_segments = ParseWidgetName(Extras, '_');
-                    (name_segments.size() >= 1) ? Label = name_segments[0] : Label = "";
-                    KnobColor = getWidgetFillColor(widgetname + "_p");
-                }
-                else
-                {
-                    KnobColor = BarColor;
-                } */
             }
-            else  // we end up here if the widget doesn't exist, so then we set the whole thing black (blank)
+            else  // we end up here if the widget doesn't exist and we set the whole thing black (blank)
             {
                 Label = "";
                 TextValue = "";

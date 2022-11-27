@@ -194,8 +194,8 @@ SurfaceWidget LibMain::PopulateWidget(std::string widgetname)
                 {
 
                     // check if it's a row parameters widget, and flag the widget as a RowParameterWidget if it is
-                    // we don't actually use this part anymore... deprecated
-                    if (control_number == "p")
+                    // This is deprecated
+                    /* if (control_number == "p")
                     {
                         widget.IsRowParameterWidget = true;
                         pwidgetname = widgetname;
@@ -204,7 +204,7 @@ SurfaceWidget LibMain::PopulateWidget(std::string widgetname)
                     }
 
                     // if not, check for a valid Column
-                    else
+                    else */
                         try
                         {
                             widget.IsRowParameterWidget = false;
@@ -243,14 +243,15 @@ SurfaceWidget LibMain::PopulateWidget(std::string widgetname)
                         if (widgetExists(pwidgetname))
                         {
                             widget.Caption = getWidgetCaption(pwidgetname);
-                            widget.RgbLitColor = getWidgetFillColor(pwidgetname);
+                            widget.RgbLitColor = getWidgetFillColor(pwidgetname);  // for knobs LitColor is the knob color, DimColor is top bar color
                             widget.RgbDimColor = getWidgetOutlineColor(pwidgetname);
                         }
                         else
                         {
                             // in the absense of an widget specific property widget we'll try the bank _p widget, eg
                             // sl_k_bank_p
-                            pwidgetname = widget.SurfacePrefix + "_" + widget.WidgetID + "_" + widget.BankID + "_p";
+                            // the use of _p widgets is deprecated
+                            /* pwidgetname = widget.SurfacePrefix + "_" + widget.WidgetID + "_" + widget.BankID + "_p";
                             if (widgetExists(pwidgetname))
                             {
                                 // widget.Caption = getWidgetCaption(pwidgetname);
@@ -258,7 +259,7 @@ SurfaceWidget LibMain::PopulateWidget(std::string widgetname)
                                 widget.RgbDimColor = getWidgetOutlineColor(pwidgetname);
                             }
                             else
-                            {
+                            { */
                                 // if no individual or bank property widget exists we'll try the bank indicator widget
                                 pwidgetname = widget.SurfacePrefix + "_" + widget.WidgetID + "_" + widget.BankID + "_i";
                                 if (widgetExists(pwidgetname))
@@ -269,13 +270,11 @@ SurfaceWidget LibMain::PopulateWidget(std::string widgetname)
                                 }
                                 else
                                 {
-                                    // if none of them exist we'll use an orange-ish color
+                                    // if none of them exist we'll use a red color
                                     widget.RgbLitColor = 0xff0000;
-                                    widget.RgbDimColor = 0x500000;
+                                    widget.RgbDimColor = 0x400000;
                                 }
-                            }
-                            // widget.BarColor = widget.LitColor;
-                            // widget.KnobColor = widget.LitColor;
+                            // }
                         }
                     }
                 }

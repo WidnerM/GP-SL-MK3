@@ -5,8 +5,6 @@ All behavior of the SL MK3 extention is determined by named widgets within a Gig
 	
 Widgets that will be utilized up by this extention must be named in the format:
 	sl_[type]_[bank ID]_[position]
-	sl_[type]_[bank ID]_i
-	sl_[type]_[bank ID]_[position]_p
 
 Valid [type] fields are:
 	k for knobs, in banks of 8
@@ -16,47 +14,55 @@ Valid [type] fields are:
 
 The "bank ID" field is used to identify different banks of each type:
 	This is a text field that is used internally
-	A simple example may help to illustrate the widget naming structure:
-		Imagine you want three different banks of knob controls:  Reverb, Volume, Pan
-			Knob widgets for reverb control would be named "sl_k_reverb_0" "sl_k_reverb_1" ... "sl_k_reverb_7"
-			Knob widgets for volume control would be named "sl_k_volume_0" etc.
-			Knob widgets for pan control would be named "sl_k_pan_0" etc.
-			One bank at a time will be assigned to the 8 knobs at the top of the SL MK3
-				The position of each knob on the SL MK3 display will track the associated widget
-				The widget caption of each knob will appear on the first line above the knob image on the display
-				The value will display on the second line above the knob
-	When the bank_up and bank_down buttons are pressed the active bank will rotate through the available banks in alphabetical sort order
+	Example: Controls for an 8 channel mixer where volume and pan can both be controlleed by knobs
+		Widgets for volume control would be named "sl_k_volume_0" "sl_k_volume_1" ... "sl_k_volume_7"
+			note - I generally make volume controls as faders in the GP panel view, but attach them to knobs for the SL MK3 because the physical faders are not motorized
+		Widgets for pan control would be named "sl_k_pan_0" ... "sl_k_pan_7"
+		One bank at a time will be assigned to the 8 knobs at the top of the SL MK3
+			The position of each knob on the SL MK3 display will track the associated widget
+			The widget caption of each knob will appear on the first line above the knob image on the display
+			The value will display on the second line above the knob
+	When the bank_up and bank_down buttons are pressed (arrows the the left of the MK3 display) the active bank will rotate through the available banks in alphabetical sort order
 	Bank selection will "wrap around" when the first or last bank is reached
 
-Each bank of controls has an associated "_i" widget that defines the color(s) and names to display on the SL MK3 screens
+Two additional groups of widgets (typically GP text widgets, often hidden) control the colors or other characteristics of the widgets on the SL MK3 surface
+	sl_[type]_[bank ID]_i    {"indicator" widgets}
+	sl_[type]p_[bank ID]_[position]     {"parameter" widgets}
+
+Indicator widgets may be created for each bank of controls, and will control four different things:
+	e.g., "sl_k_volume_i" and "sl_k_pan_i"
 	Text widgets in GP are generally the most useful for these
-		The Caption of the widget will appear on the SL MK3 display, showin in the form of "top line_bot line"
-			The text color alpha property can be set to 0 so that the label text is not visible on the GP screen
-		These _i widgets can be useful for visual feedback on the GigPerformer screen showing which bank is active
-		When a bank is active the SL MK3 extention will set its value (effectively brightness) to 1 to raise its visibility in GP
+		The Caption of the widget will appear on the rightmost SL MK3 display, shown in in the form of "top line_bot line"
+			tip: widget text color alpha property can be set to 0 so that the label text is not visible on the GP screen, or the text widget can be hidden
+
+		Indicator widgets can also be used for visual feedback on the GigPerformer screen to indicate which bank is currently actively linked to the SL MK3
+			When a bank is active the extention will set its value (effectively brightness) to 1 to raise its visibility in GP
 			Non-active bank indicators will have their value (brightness) set to 0.3 to reduce their visibility
+			tip: a GP text widget with a white border and text color alpha set to zero can act on the GP rackspace screen as a "region backlight" to indicate which controls are "active"
 
 	Color information for the bank is taken from the "Fill Color" property of the "_i" widgets
-		e.g., to have a knob bank with the bank ID "volume" display as green, create a shape widget "sl_k_volume_i" and set its fill color to green in GigPerformer
-		The extention will use the RGB channel information of the widget to set the color on the SL MK3 display
-		If you do not want these widgets to show on the GP screen you may set the "Hide" property of the widget (which is often done if using Text widgets for this)
+		e.g., to have our "volume" bank display as green, we a text widget "sl_k_volume_i" and set its fill color to green in GigPerformer
+		The extention will use the RGB channel information of the widget Fill Color to set the color on the SL MK3 display
+		tip: if you do not want these widgets to show on the GP screen you may set the "Hide" property of the widget (I usually do)
 		
 	The caption field of the GP widget will contain two lines of text information for knob and button banks
 		Captions contain two text fields of up to 9 characters separated by "_" and will display on the rightmost LCD display
 			e.g., a widget named "sl_b_solomute_i" with a caption of "Solo_Mute" would display text of "Solo" next to the top button row and "Mute" near the bottom row
 
-	The up/down arrows to the left of the LCDs cycle through knob banks
-	The up/down arrows to the right of the buttons cycle through button banks
-		The colors of the up and down arrows correspond the the colors of the next/previous banks
+The up/down arrows to the left of the LCDs cycle through knob banks
+The up/down arrows to the right of the buttons cycle through button banks
+The colors of the up and down arrows correspond the the colors of the next/previous banks
 
-The "_p" widgets are optional and contain additional parameters for individual widgets
+"Parameter" widgets are optional and contain additional parameters for individual widgets (generally using text widgets that are hidden)
 	For knob widgets:
-		Knob color will be picked up from the GP widget Fill Color and override the bank default defined by the bank's _i widget
-		Knob label will be taken from the _p widget Caption and override the knob default defined by the knob widget caption
-		If a knob _p widget caption contains an integer parameter after a "_" delimiter it will be used as the knob resolution (higher numbers for finer resolution, default 1000)
+		Knob color will be picked up from the GP parameter widget Fill Color (and override the bank default defined by the bank's _i widget)
+		Bar color above the knob will be taken from GP parameter widget Outline Color (and override the default)
+		Knob label will be taken from the p widget Caption and override the knob default defined by the knob widget caption
+		If a knob p widget caption contains an integer parameter after a "_" delimiter it will be used as the knob resolution (higher numbers for finer resolution, default 1000)
+			example:  "sl_kp_volume_0" ... "sl_kp_volume_7" can be used to set each knob color, caption, and resolution individually
 	For buttons and pads:
-		The _p widget Fill Color will be used for the On color (overriding the bank default of the _i widget)
+		The p widget Fill Color will be used for the On color (overriding the bank default of the _i widget)
 		The widget Outline Color will be used for the Off color (overriding the bank default)
-		For buttons, the _p GP widget caption will display momentarily at the bottom of the rightmost LCD display when a button is toggled
-	If no _p widget exists for a knob or button then color information will be inherited from the _i widget for the bank
+		For buttons, the p GP widget caption will display momentarily at the bottom of the rightmost LCD display when a button is toggled
+	If no p widget exists for a knob or button then color information will be inherited from the _i widget for the bank
 

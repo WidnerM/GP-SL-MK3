@@ -106,31 +106,6 @@ void LibMain::DisplayButtons(SurfaceRow row, uint8_t firstbutton, uint8_t number
 
 }
 
-// Returns the color to make a widget based on the widget's GetWidgetValue() and any parameters set for the widget on related "_p" widgets
-// deprecated
-uint8_t LibMain::getWidgetColor(std::string widgetname, double value)
-{
-    uint8_t LitColor = SLMKIII_ORANGE, DimColor = SLMKIII_ORANGE_HALF;
-    std::string Caption, Extras, Label;
-
-    // check for an extra properties widget on widgetname_P (e.g., sl_b_1_1_p) 
-    if (widgetExists(widgetname + "_p"))
-    {
-        Extras = getWidgetCaption(widgetname + "_p");
-        std::vector< std::string> name_segments = ParseWidgetName(Extras, '_');
-        (name_segments.size() >= 2) ? LitColor = (uint8_t)std::stoi("0" + name_segments[0]) : LitColor = SLMKIII_ORANGE;  // default to orange
-        (name_segments.size() >= 2) ? DimColor = (uint8_t)std::stoi("0" + name_segments[1]) : DimColor = SLMKIII_ORANGE_HALF;  // default to orange
-        // if (name_segments.size() >= 3) { Notify(name_segments[3]); }
-    }
-    else
-    {
-        LitColor = SLMKIII_ORANGE;
-        DimColor = SLMKIII_ORANGE_HALF;
-    }
-
-    if (value != (double) 0.0) return LitColor;
-    else return DimColor;
-}
 
 // Returns the color to make a widget based on the widget's GetWidgetValue() and any parameters set for the widget on related "_p" widgets
 /*  int LibMain::getWidgetRGBColor(std::string widgetname, double value)
@@ -237,7 +212,7 @@ SurfaceWidget LibMain::PopulateWidget(std::string widgetname)
                     if (widget.Validated)
                     {
 
-                        // if there is a _kp_ widget that takes first priority, e.g. sl_kp_bank_0
+                        // if there is a column speciic _kp_ widget that takes first priority, e.g. sl_kp_bank_0
                         pwidgetname =
                             widget.SurfacePrefix + "_" + widget.WidgetID + "p_" + widget.BankID + "_" + control_number;
                         if (widgetExists(pwidgetname))
@@ -248,10 +223,8 @@ SurfaceWidget LibMain::PopulateWidget(std::string widgetname)
                         }
                         else
                         {
-                            // in the absense of an widget specific property widget we'll try the bank _p widget, eg
-                            // sl_k_bank_p
-                            // the use of _p widgets is deprecated
-                            /* pwidgetname = widget.SurfacePrefix + "_" + widget.WidgetID + "_" + widget.BankID + "_p";
+                            // in the absense of a widget specific property widget we'll try the bank p widget, eg sl_kp_bank
+                            pwidgetname = widget.SurfacePrefix + "_" + widget.WidgetID + "p_" + widget.BankID;
                             if (widgetExists(pwidgetname))
                             {
                                 // widget.Caption = getWidgetCaption(pwidgetname);
@@ -259,7 +232,7 @@ SurfaceWidget LibMain::PopulateWidget(std::string widgetname)
                                 widget.RgbDimColor = getWidgetOutlineColor(pwidgetname);
                             }
                             else
-                            { */
+                            {
                                 // if no individual or bank property widget exists we'll try the bank indicator widget
                                 pwidgetname = widget.SurfacePrefix + "_" + widget.WidgetID + "_" + widget.BankID + "_i";
                                 if (widgetExists(pwidgetname))
@@ -270,11 +243,11 @@ SurfaceWidget LibMain::PopulateWidget(std::string widgetname)
                                 }
                                 else
                                 {
-                                    // if none of them exist we'll use a red color
-                                    widget.RgbLitColor = 0xff0000;
-                                    widget.RgbDimColor = 0x400000;
+                                    // if none of them exist we'll use a blue color
+                                    widget.RgbLitColor = 0x0000A0;
+                                    widget.RgbDimColor = 0x000030;
                                 }
-                            // }
+                            }
                         }
                     }
                 }

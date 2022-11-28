@@ -192,6 +192,6 @@ void LibMain::ClearDisplayRow(SurfaceRow row)
 
     for (column = 0; column <= row.Columns -1 ; column++)
     {
-        DisplayWidgetValue(row, column, (int)0);
+        DisplayWidgetValue(row, column, (int)0x000000);
     }
 }

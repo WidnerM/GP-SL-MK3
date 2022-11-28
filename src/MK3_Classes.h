@@ -239,7 +239,7 @@ public:
 			Row[x].FirstID = first_midi[x];
 			Row[x].FirstIDsysex = first_sysex[x];
 			Row[x].MidiCommand = midi_commands[x];
-			Row[x].Showing = 1; // not currently using this
+			Row[x].Showing = 1;
 		}
 
 		return true;

@@ -120,7 +120,6 @@ public:
 
     // from Buttons.cpp
     void DisplayButtons(SurfaceRow row, uint8_t firstbutton, uint8_t number);
-    uint8_t getWidgetColor(std::string widgetname, double value);
     // int getWidgetRGBColor(std::string widgetname, double value); // deprecated
     int getWidgetRGBColor(SurfaceWidget widgetname, double value);
 
@@ -244,7 +243,7 @@ public:
         if (widget.IsSurfaceItemWidget)  // some widgets we listen for may not display on the control surface
         {
             // if the GP widget is not in the active bank on the control surface we don't need to display it
-            if ( widget.BankID == Surface.Row[widget.RowNumber].ActiveBankID())
+            if ( widget.BankID == Surface.Row[widget.RowNumber].ActiveBankID() && Surface.Row[widget.RowNumber].Showing == 1)
             {
                 // for everything but Knobs we need to translate the new widget value to a color for the surface LED
                 if (Surface.Row[widget.RowNumber].Type == KNOB_TYPE)
@@ -378,7 +377,7 @@ public:
         else {
             for (index = 0; index < row.BankIDs.size(); ++index)
             {
-                widgetname = row.WidgetPrefix + (std::string)"_" + row.BankIDs[index] + (std::string)"_b";
+                widgetname = row.WidgetPrefix + (std::string)"_" + row.BankIDs[index] + (std::string)"_i";
                 // scriptLog("sAFB sees " + widgetname + (std::string)" as " + std::to_string(getWidgetValue(widgetname)), 1);
                 if (widgetExists(widgetname))
                 {
@@ -428,6 +427,10 @@ public:
         setActiveBank(Surface.Row[PAD_ROW]);
         DisplayRow(Surface.Row[PAD_ROW]);
 
+        setActiveBank(Surface.Row[FADER_ROW]);
+        Surface.Row[FADER_ROW].Showing = 0;
+        ClearDisplayRow(Surface.Row[FADER_ROW]);  // we clear the fader LEDs to indicate the widgets aren't aligned to the faders
+
         // scriptLog("Set knob activebankt " + std::to_string(Surface.Row[KNOB_ROW].ActiveBank), 1);
         // ResetKnobBankIndicators();
         
@@ -463,6 +466,10 @@ public:
 
         setActiveBank(Surface.Row[PAD_ROW]);
         DisplayRow(Surface.Row[PAD_ROW]);
+
+        setActiveBank(Surface.Row[FADER_ROW]);
+        Surface.Row[FADER_ROW].Showing = 0;
+        ClearDisplayRow(Surface.Row[FADER_ROW]); // we clear the fader LEDs to indicate the widgets aren't aligned to the faders
 
         // read variation name and post it in a Notify to the SL MKIII
         // Notify("Variation: " + newIndex);

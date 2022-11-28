@@ -353,7 +353,7 @@ void LibMain::ProcessPad(uint8_t button, uint8_t value)
 
 void LibMain::ProcessKnob(uint8_t column, uint8_t value)  // processes a midi message for a knob turn (0-7) or the on/off of a knob 8
 {
-    std::string widgetname, caption;
+    std::string widgetname, pwidgetname, caption;
     int resolution = 1000;
     double newValue = 0;
 
@@ -364,11 +364,12 @@ void LibMain::ProcessKnob(uint8_t column, uint8_t value)  // processes a midi me
         {
             if (column < 8)
             {
-                if (widgetExists(widgetname + "_r"))  // if there's a sl_k_1_5_r widget process first caption field as resolution (integer)
+                pwidgetname = KNOB_PREFIX + (std::string)"p_" + Surface.Row[KNOB_ROW].BankIDs[Surface.Row[KNOB_ROW].ActiveBank] + "_" + std::to_string(column);
+                if (widgetExists(pwidgetname))  // if there's a sl_kp_1_5 widget process second caption field as resolution (integer)
                 {
-                    caption = getWidgetCaption(widgetname + "_r");
+                    caption = getWidgetCaption(pwidgetname);
                     std::vector< std::string> name_segments = ParseWidgetName(caption, '_');
-                    (name_segments.size() >= 1) ? resolution = (int)std::stoi("0" + name_segments[0]) : resolution = 1000;  // default to 1000
+                    (name_segments.size() >= 2) ? resolution = (int)std::stoi("0" + name_segments[1]) : resolution = 1000;  // default to 1000
                 }
                 newValue = getWidgetValue(widgetname);
                 if (value < 4) {  // small numbers are turns in the clockwise direction
@@ -392,18 +393,29 @@ void LibMain::ProcessKnob(uint8_t column, uint8_t value)  // processes a midi me
 void LibMain::ProcessFader(uint8_t column, uint8_t value)  // processes a midi message for a fader
 {
     std::string widgetname, caption;
-    double newValue = 0;
+    double newValue, oldValue;
 
     if (Surface.Row[FADER_ROW].BankValid())
     {
         widgetname = FADER_PREFIX + (std::string)"_" + Surface.Row[FADER_ROW].BankIDs[Surface.Row[FADER_ROW].ActiveBank] + "_" + std::to_string(column);
+        // scriptLog(widgetname, 0);
         if (widgetExists(widgetname) == true)  // if the widget doesn't exist we ignore the input
         {
             if (column < 8)
             {
-                newValue = getWidgetValue(widgetname);
-
-                setWidgetValue(widgetname, static_cast<double>(value) / static_cast<double>(127));
+                oldValue = getWidgetValue(widgetname);
+                newValue = static_cast<double>(value) / static_cast<double>(127);
+                if (abs(newValue - oldValue) < 0.04)
+                {
+                    Surface.Row[FADER_ROW].Showing = 1;
+                    setWidgetValue(widgetname, newValue);
+                    // DisplayWidgetValue(Surface.Row[FADER_ROW], column, 0x000080);
+                }
+                else
+                {
+                    if (newValue > oldValue) { DisplayWidgetValue(Surface.Row[FADER_ROW], column, 0x008000); }
+                    else { DisplayWidgetValue(Surface.Row[FADER_ROW], column, 0x800000); }
+                }
             }
             else
             {

@@ -78,7 +78,7 @@ void LibMain::InvokeMenu(int index)
             }
             break;
         case 1:
-            scriptLog("Nothing here really.", 0);
+            scriptLog("Nothing here.", 0);
             break;
         case 2:
             SetMidiInOutDevices();

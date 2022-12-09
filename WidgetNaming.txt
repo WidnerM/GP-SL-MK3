@@ -1,4 +1,4 @@
-All behavior of the SL MK3 extention is determined by named widgets within a GigPerformaer Rackspace
+Most behavior of the SL MK3 extention is determined by named widgets within a GigPerformaer Rackspace
 	Upon a Rackspace being activated the extension will scan all widgets in the rackspace (local and global)
 	The "Advanced" tab of each GP widget has a field called "OSC/GPScript Name" that will be used to determine whether the extension will monitor the widget
 		If the OSC/GPScript Name begins with "sl_" the extension will monitor it
@@ -29,29 +29,22 @@ Two additional groups of widgets (typically GP text widgets, often hidden) contr
 	sl_[type]_[bank ID]_i    {"indicator" widgets}
 	sl_[type]p_[bank ID]_[position]     {"parameter" widgets}
 
-Indicator widgets may be created for each bank of controls, and will control four different things:
-	e.g., "sl_k_volume_i" and "sl_k_pan_i"
-	Text widgets in GP are generally the most useful for these
-		The Caption of the widget will appear on the rightmost SL MK3 display, shown in in the form of "top line_bot line"
+Indicator widgets may be created for each bank of controls for three things:
+		Note:  text widgets in GP are generally the most useful for these
+		Naming e.g., "sl_k_volume_i" and "sl_k_pan_i"
+	
+	The Caption of the widget will appear on the rightmost SL MK3 display, shown in in the form of "top line_bottom line"
+			e.g., "Solo_Mute" to display "Solo" next to the top button row, "Mute" next to the bottom row
 			tip: widget text color alpha property can be set to 0 so that the label text is not visible on the GP screen, or the text widget can be hidden
 
-		Indicator widgets can also be used for visual feedback on the GigPerformer screen to indicate which bank is currently actively linked to the SL MK3
-			When a bank is active the extention will set its value (effectively brightness) to 1 to raise its visibility in GP
-			Non-active bank indicators will have their value (brightness) set to 0.3 to reduce their visibility
-			tip: a GP text widget with a white border and text color alpha set to zero can act on the GP rackspace screen as a "region backlight" to indicate which controls are "active"
-
 	Color information for the bank is taken from the "Fill Color" property of the "_i" widgets
-		e.g., to have our "volume" bank display as green, we a text widget "sl_k_volume_i" and set its fill color to green in GigPerformer
-		The extention will use the RGB channel information of the widget Fill Color to set the color on the SL MK3 display
-		tip: if you do not want these widgets to show on the GP screen you may set the "Hide" property of the widget (I usually do)
+		e.g., to have our "volume" bank display as green, create a text widget "sl_k_volume_i" and set its fill color to green in GigPerformer
+		The extention will use the RGB channel information of the widget Fill Color to set the RGB color on the SL MK3
 		
-	The caption field of the GP widget will contain two lines of text information for knob and button banks
-		Captions contain two text fields of up to 9 characters separated by "_" and will display on the rightmost LCD display
-			e.g., a widget named "sl_b_solomute_i" with a caption of "Solo_Mute" would display text of "Solo" next to the top button row and "Mute" near the bottom row
-
-The up/down arrows to the left of the LCDs cycle through knob banks
-The up/down arrows to the right of the buttons cycle through button banks
-The colors of the up and down arrows correspond the the colors of the next/previous banks
+	Indicator widgets can also be used for visual feedback on the GigPerformer screen to indicate which bank is currently actively linked to the SL MK3
+		When a bank is active the extention will set its value (effectively brightness) to 1 to raise its visibility in GP
+		Non-active bank indicators will have their value (brightness) set to 0.3 to reduce their visibility
+		tip: a GP text widget with a white border and text color alpha set to zero can act on the GP rackspace screen as a "region backlight" to indicate which controls are "active"
 
 "Parameter" widgets are optional and contain additional parameters for individual widgets (generally using text widgets that are hidden)
 	For knob widgets:
@@ -65,4 +58,10 @@ The colors of the up and down arrows correspond the the colors of the next/previ
 		The widget Outline Color will be used for the Off color (overriding the bank default)
 		For buttons, the p GP widget caption will display momentarily at the bottom of the rightmost LCD display when a button is toggled
 	If no p widget exists for a knob or button then color information will be inherited from the _i widget for the bank
+
+
+The up/down arrows to the left of the LCDs cycle through knob banks
+The up/down arrows to the right of the buttons cycle through button banks
+The colors of the up and down arrows correspond the the colors of the next/previous banks
+
 

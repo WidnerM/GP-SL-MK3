@@ -243,9 +243,9 @@ SurfaceWidget LibMain::PopulateWidget(std::string widgetname)
                                 }
                                 else
                                 {
-                                    // if none of them exist we'll use a blue color
-                                    widget.RgbLitColor = 0x0000A0;
-                                    widget.RgbDimColor = 0x000030;
+                                    // if none of them exist we'll use a green color
+                                    widget.RgbLitColor = 0x00A000;
+                                    widget.RgbDimColor = 0x003000;
                                 }
                             }
                         }

@@ -1,3 +1,14 @@
+Novation SL MK3 Extension for GigPerformer
+
+Some system functions are built in and assigned to SL MK3 keys.  These include:
+	Play:						Play transport key
+	Stop:						Stop transport key
+	Toggle Setlist Mode:		Clear key (toward lower left) - toggles GP in and out of SetList mode
+	Toggle Racks/Variation:		Grid button will toggle between selecting Racks/Variation or Songs/Songparts depending on mode
+	Page Racks/Songs/etc:		Left and Righ arrows at bottom left will page forard and backward through Songs/Racks/Variation/Songparts
+	The 8 buttons below displays will select Song/Songpart/Rack/Variation depending on mode
+
+
 Most behavior of the SL MK3 extention is determined by named widgets within a GigPerformaer Rackspace
 	Upon a Rackspace being activated the extension will scan all widgets in the rackspace (local and global)
 	The "Advanced" tab of each GP widget has a field called "OSC/GPScript Name" that will be used to determine whether the extension will monitor the widget

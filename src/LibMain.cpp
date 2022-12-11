@@ -2,7 +2,7 @@
 
 
 // List of panels
-std::vector<std::string> panelNames = { "MCU to OSC" };
+std::vector<std::string> panelNames = { "No Panels" };
 std::vector<std::string> relativePanelLocations = { "MCU2OSC.gppanel" };
 
 

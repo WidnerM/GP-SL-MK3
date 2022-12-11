@@ -520,7 +520,6 @@ public:
         // Write message to screen and clear all buttons
         sendMidiMessage(gigperformer::sdk::GPMidiMessage::makeSysexMessage(
             gigperformer::sdk::GPUtils::hex2binaryString(SLMK3_EMPTY_LAYOUT)));
-        // sendMidiMessageToMidiOutDevice(MidiOut, GPMidiMessage::makeSysexMessage(GPUtils::hex2binaryString(SLMK3_BOX_LAYOUT)));
         sendMidiMessage(gigperformer::sdk::GPMidiMessage::makeSysexMessage(
             gigperformer::sdk::GPUtils::hex2binaryString(SLMK3_KNOB_LAYOUT)));
 

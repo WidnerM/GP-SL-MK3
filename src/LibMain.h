@@ -287,11 +287,11 @@ public:
                 char str[1024];
                 char extra[5];
 
-                sprintf_s(str, "Unexpected midi event: ");
+                sprintf(str, "Unexpected midi event: ");
                 for (auto x = 0; x < length; x++)
                 {
-                    sprintf_s(extra, " %0x", data[x]);
-                    strcat_s(str, extra);
+                    sprintf(extra, " %0x", data[x]);
+                    strcat(str, extra);
                 }
                 scriptLog(str, 1);
                 scriptLog(deviceName, 1);

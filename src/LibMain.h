@@ -66,6 +66,7 @@ public:
 
     // from Display.cpp - functions for displaying things on the main displays
     void InitializeMK3();
+    uint8_t SetDisplayLayout(); // sets the SL MK3 display to appropriate mode based on Surface.DisplayLayout
     void Notify(std::string text, std::string line2);
     void DisplayText(uint8_t column, uint8_t row, std::string text);
     void Keylights(const uint8_t* data, int length);
@@ -76,11 +77,12 @@ public:
 
     void ShowTopLabelColor(uint8_t position, uint8_t color);
     void ShowBottomLabelColor(uint8_t position, uint8_t color);
-    void ShowBottomHighlight(uint8_t position, uint8_t color);
+    void DisplayHilight(uint8_t position, uint8_t row, uint8_t color);
+    void DisplayBoxColor(uint8_t position, uint8_t row, int color);
 
-    void ShowKnobColor(uint8_t position, uint8_t color);
-    void ShowKnobCaption(uint8_t column, const std::string caption);
-    void ShowKnobLabel(uint8_t column, const std::string caption);
+    // void ShowKnobColor(uint8_t position, uint8_t color);
+    // void ShowKnobCaption(uint8_t column, const std::string caption);
+    // void ShowKnobLabel(uint8_t column, const std::string caption);
 
     void DisplayWidgetValue(const SurfaceRow & Row, uint8_t column, uint8_t value);
     void DisplayWidgetValue(const SurfaceRow & Row, uint8_t column, double value);
@@ -122,6 +124,7 @@ public:
     void DisplayButtons(SurfaceRow row, uint8_t firstbutton, uint8_t number);
     // int getWidgetRGBColor(std::string widgetname, double value); // deprecated
     int getWidgetRGBColor(SurfaceWidget widgetname, double value);
+    void ClearBoxArea();
 
     SurfaceWidget PopulateWidget(std::string widgetname);
     SurfaceWidget PopulateWidget(std::string widgetname, double passed_value);
@@ -251,7 +254,13 @@ public:
                 else
                 {
                     DisplayWidgetValue(Surface.Row[widget.RowNumber], widget.Column, getWidgetRGBColor(widget, newValue));
-                    // if the widget isn't currently displayed on the screen this does nothing
+                    if (Surface.Row[widget.RowNumber].Type == PAD_TYPE && Surface.DisplayLayout == BOX_LAYOUT)
+                    {
+                        // need to set color of the block or this won't show the outline or box color
+                        DisplayBoxColor(widget.Column < 8 ? widget.Column : widget.Column - 8, (uint8_t) widget.Column / 8, widget.RgbLitColor);
+                        if (widget.Column < 8) DisplayHilight(widget.Column, 0, newValue > 0.0 ? (uint8_t) 1 : (uint8_t) 0);
+                        else DisplayHilight(widget.Column -8, 1, newValue > 0.0 ? (uint8_t)1 : (uint8_t)0);
+                    }
                 }
                 DisplayWidgetCaption(Surface.Row[widget.RowNumber], widget.Column, widget.TextValue, widget.Caption);
             }        
@@ -521,7 +530,7 @@ public:
         sendMidiMessage(gigperformer::sdk::GPMidiMessage::makeSysexMessage(
             gigperformer::sdk::GPUtils::hex2binaryString(SLMK3_EMPTY_LAYOUT)));
         sendMidiMessage(gigperformer::sdk::GPMidiMessage::makeSysexMessage(
-            gigperformer::sdk::GPUtils::hex2binaryString(SLMK3_KNOB_LAYOUT)));
+            gigperformer::sdk::GPUtils::hex2binaryString(SLMK3_BOX_LAYOUT)));
 
         DisplayText(0, 1, " ");
         DisplayText(1, 1, " ");

@@ -3,7 +3,7 @@
 
 // List of panels
 std::vector<std::string> panelNames = { "No Panels" };
-std::vector<std::string> relativePanelLocations = { "MCU2OSC.gppanel" };
+std::vector<std::string> relativePanelLocations = { "SLMK3Demo.gppanel" };
 
 
 std::string pathToMe; // This needs to be initialized from the initialization secttion of the LibMain class so it can be used in the standalone functions directly below

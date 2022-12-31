@@ -85,7 +85,7 @@ public:
 	std::string RowLabel = "Knobs";  // a friendly name for what the row is, e.g., "Faders", "Knobs", etc.  Used to indicate on the display what bank of controls the displayed labels are for
 
 	int ActiveBank = -1; // the index of the bank shown on and controlled by the controller
-	uint8_t Showing = 1; // deprecated
+	uint8_t Showing = 1; // show this row?  we only use this to not show the fader row in the notify area
 	uint8_t Columns = 8;
 	uint8_t MidiCommand = 0x90; // midi command from the control surface that corresponds to this row
 	uint8_t FirstID = 0;  // the first ID that corresponds to the row, eg. note number 0x64.  Elements of a control row must have sequential IDs
@@ -197,9 +197,9 @@ public:
 	SurfaceRow Row[4];
 	uint8_t NumRows = 4;
 
-	int DisplayLayout = KNOB_LAYOUT;   // Is display showing Knob Layout or Box Layout (which shows three groups of two lines per display) 
-	int BottomMode = SHOW_RACKSPACES;  // What to show along bottom of display when in Knob View mode
-	int SideMode = SHOW_BUTTONS;
+	uint8_t DisplayLayout = KNOB_LAYOUT;   // Is display showing Knob Layout or Box Layout (which shows three groups of two lines per display) 
+	uint8_t BottomMode = SHOW_RACKSPACES;  // What to show along bottom of display when in Knob View mode
+	uint8_t SideMode = SHOW_BUTTONS;
 
 	int FirstShown[BOTTOM_MODES] = { 0, 0, 0, 0, 0 };
 	uint8_t BottomColor[BOTTOM_MODES] = { SLMKIII_ORANGE, SLMKIII_BLUE, SLMKIII_PURPLE, SLMKIII_MINT, SLMKIII_GREEN };

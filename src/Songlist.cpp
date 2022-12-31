@@ -94,7 +94,20 @@ void LibMain::DisplayBottom(bool forcetocurrent)
             Surface.FirstShown[Surface.BottomMode] = 0;
         }
     }
-    gigperformer::sdk::GPMidiMessage();
+    // gigperformer::sdk::GPMidiMessage();
+    
+    // by default we're in Knob display mode
+    std::string TopLineHexCode = " 01 02 ";
+    std::string BottomLineHexCode = " 01 03 ";
+    std::string HighlightHexCode = " 03 01 ";
+
+    // if we're in box layout then we need to move it down two lines
+    if (Surface.DisplayLayout == BOX_LAYOUT)
+    {
+        TopLineHexCode = " 01 04 ";
+        BottomLineHexCode = " 01 05 ";
+        HighlightHexCode = " 03 02 ";
+    }
     hexmessage = SLMK3_SYS_HEADER + (std::string) " 02";  // the prefix for LCD display areas
 
     positionindex = Surface.FirstShown[Surface.BottomMode];
@@ -130,11 +143,12 @@ void LibMain::DisplayBottom(bool forcetocurrent)
 
         positionindex++;
 
-        hexmessage += " 0" + std::to_string(x) + " 01 02 " + textToHexString(TopLine.substr(0, 9)) + " 00";   // the TopLine text
-        hexmessage += " 0" + std::to_string(x) + " 03 01 " + (Full ? (std::string) " 01" : (std::string) " 00"); // highlight on or off
+        // XXXX need to change "01 02" to "01 04" and "01 03" to "01 05" if the display is in box mode rather than knob mode
+        hexmessage += " 0" + std::to_string(x) + TopLineHexCode + textToHexString(TopLine.substr(0, 9)) + " 00";   // the TopLine text
+        hexmessage += " 0" + std::to_string(x) + HighlightHexCode + (Full ? (std::string) " 01" : (std::string) " 00"); // highlight on or off
         hexmessage +=
             " 0" + std::to_string(x) + " 02 02 " + gigperformer::sdk::GPUtils::intToHex(Color); // set bottom bar color
-        hexmessage += " 0" + std::to_string(x) + " 01 03 " + textToHexString(BottomLine.substr(0, 9)) + " 00";  // set bottom line text
+        hexmessage += " 0" + std::to_string(x) + BottomLineHexCode + textToHexString(BottomLine.substr(0, 9)) + " 00";  // set bottom line text
     }
     hexmessage += " f7";
     binmessage = (char)0xf0 + cleanSysex(gigperformer::sdk::GPUtils::hex2binaryString(hexmessage)) + (char)0xf7;

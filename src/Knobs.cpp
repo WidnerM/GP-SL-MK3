@@ -52,38 +52,41 @@ void LibMain::DisplayKnobs(SurfaceRow row)
         hexmessage += " 08 04 00 " + GPColorToSLColorHex(BarColor); // center left bar color
         hexmessage += " 08 01 01 " + textToHexString(TextValue.substr(0, 9)) + " 00";  // set Caption (2nd) line text
 
-        // build the sysex string for each individual knob
-        for (x = 0; x <= 7; x++)
+        // build the sysex string for each individual knob if we're displaying knobs
+        if (Surface.DisplayLayout == KNOB_LAYOUT)
         {
-            widgetname = row.WidgetPrefix + "_" + row.BankIDs[row.ActiveBank] + "_" + std::to_string(x);
-            widget = PopulateWidget(widgetname);
-            if (widget.IsSurfaceItemWidget)
+            for (x = 0; x <= 7; x++)
             {
+                widgetname = row.WidgetPrefix + "_" + row.BankIDs[row.ActiveBank] + "_" + std::to_string(x);
+                widget = PopulateWidget(widgetname);
+                if (widget.IsSurfaceItemWidget)
+                {
 
-                Value = widget.Value;
-                Label = widget.Caption;
-                TextValue = widget.TextValue;
-                BarColor = widget.RgbDimColor;
-                KnobColor = widget.RgbLitColor;
+                    Value = widget.Value;
+                    Label = widget.Caption;
+                    TextValue = widget.TextValue;
+                    BarColor = widget.RgbDimColor;
+                    KnobColor = widget.RgbLitColor;
+
+                }
+                else  // we end up here if the widget doesn't exist and we set the whole thing black (blank)
+                {
+                    Label = "";
+                    TextValue = "";
+                    KnobColor = SLMKIII_BLACK;
+                    // Show = false;
+                }
+
+                hexmessage += " 0" + std::to_string(x) + " 04 00 " + (std::string)GPColorToSLColorHex(BarColor); // set top bar color
+                hexmessage += " 0" + std::to_string(x) + " 04 01 " + (std::string)GPColorToSLColorHex(KnobColor); // set knob color
+                hexmessage += " 0" + std::to_string(x) + " 01 00 " + textToHexString(cleanSysex(Label).substr(0, 9)) + " 00";   // the TopLine text
+                hexmessage += " 0" + std::to_string(x) + " 01 01 " + textToHexString(cleanSysex(TextValue).substr(0, 9)) + " 00";  // set Caption (2nd) line text
+
+                hexmessage += " 0" + std::to_string(x) + " 03 00 " +
+                    gigperformer::sdk::GPUtils::intToHex((uint8_t)(Value * 127)); // set knob position
+
 
             }
-            else  // we end up here if the widget doesn't exist and we set the whole thing black (blank)
-            {
-                Label = "";
-                TextValue = "";
-                KnobColor = SLMKIII_BLACK;
-                // Show = false;
-            }
-
-            hexmessage += " 0" + std::to_string(x) + " 04 00 " + (std::string)GPColorToSLColorHex(BarColor); // set top bar color
-            hexmessage += " 0" + std::to_string(x) + " 04 01 " + (std::string)GPColorToSLColorHex(KnobColor); // set knob color
-            hexmessage += " 0" + std::to_string(x) + " 01 00 " + textToHexString(cleanSysex(Label).substr(0, 9)) + " 00";   // the TopLine text
-            hexmessage += " 0" + std::to_string(x) + " 01 01 " + textToHexString(cleanSysex(TextValue).substr(0, 9)) + " 00";  // set Caption (2nd) line text
-            
-            hexmessage += " 0" + std::to_string(x) + " 03 00 " +
-                          gigperformer::sdk::GPUtils::intToHex((uint8_t)(Value * 127)); // set knob position
-            
-
         }
         binmessage = (char)0xf0 + cleanSysex(gigperformer::sdk::GPUtils::hex2binaryString(hexmessage)) + (char)0xf7;
         sendMidiMessage(binmessage);
@@ -154,7 +157,8 @@ uint8_t LibMain::GetBankColor(SurfaceRow row, int bankindex)
     return color;
 }
 
-// returns the color of the indicated bankindex of Surface.Row by checking for presense of an "_i" widget, with GetWidgetFillColor() for the indicator color
+// returns the color of the indicated bankindex of Surface.Row by checking for presense of a
+// bank parameter widget, or "_i" widget, with GetWidgetFillColor() for the indicator color.
 // generally used for coloring the up/down bank arrows for knobs, button, and pad rows
 int LibMain::GetBankRGBColor(SurfaceRow row, int bankindex)
 {
@@ -166,6 +170,13 @@ int LibMain::GetBankRGBColor(SurfaceRow row, int bankindex)
         widgetname = row.WidgetPrefix + (std::string)"_" + row.BankIDs[bankindex] + "_i";
         if (widgetExists(widgetname)) {
             color = getWidgetFillColor(widgetname);
+        }
+        else
+        {
+            widgetname = row.WidgetPrefix + (std::string)"p_" + row.BankIDs[bankindex];
+            if (widgetExists(widgetname)) {
+                color = getWidgetFillColor(widgetname);
+            }
         }
     }
     return color;

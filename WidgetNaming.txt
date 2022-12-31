@@ -26,9 +26,9 @@ Valid [type] fields are:
 The "bank ID" field is used to identify different banks of each type:
 	This is a text field that is used internally
 	Example: Controls for an 8 channel mixer where volume and pan can both be controlleed by knobs
-		Widgets for volume control would be named "sl_k_volume_0" "sl_k_volume_1" ... "sl_k_volume_7"
+		Widgets for volume control could be named "sl_k_volume_0" "sl_k_volume_1" ... "sl_k_volume_7"
 			note - I generally make volume controls as faders in the GP panel view, but attach them to knobs for the SL MK3 because the physical faders are not motorized
-		Widgets for pan control would be named "sl_k_pan_0" ... "sl_k_pan_7"
+		Widgets for pan control could be named "sl_k_pan_0" ... "sl_k_pan_7"
 		One bank at a time will be assigned to the 8 knobs at the top of the SL MK3
 			The position of each knob on the SL MK3 display will track the associated widget
 			The widget caption of each knob will appear on the first line above the knob image on the display

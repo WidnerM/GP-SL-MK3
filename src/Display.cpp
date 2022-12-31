@@ -17,9 +17,16 @@ void LibMain::InitializeMK3()
         // hexmessage = SLMK3_KNOB_LAYOUT;
         sendMidiMessage(gigperformer::sdk::GPMidiMessage(SLMK3_KNOB_LAYOUT));
         sendMidiMessage(
-            gigperformer::sdk::GPMidiMessage(SLMK3_SYS_HEADER + (std::string) "05 01 F7"));
+            gigperformer::sdk::GPMidiMessage(SLMK3_SYS_HEADER + (std::string) "05 01 F7")); // Tell SLMK3 to allow setting of LEDs
 
     }
+}
+
+uint8_t LibMain::SetDisplayLayout()
+{
+    if (Surface.DisplayLayout == KNOB_LAYOUT) sendMidiMessage(gigperformer::sdk::GPMidiMessage(SLMK3_KNOB_LAYOUT));
+    else if (Surface.DisplayLayout == BOX_LAYOUT) sendMidiMessage(gigperformer::sdk::GPMidiMessage(SLMK3_BOX_LAYOUT));
+    return Surface.DisplayLayout;
 }
 
 // converts a GP widget color integer to a hex string for SL midi
@@ -84,16 +91,27 @@ void LibMain::ShowBottomLabelColor(uint8_t position, uint8_t color)
 }
 
 
-void LibMain::ShowBottomHighlight(uint8_t position, uint8_t color)  // color is 1 for highlight, 0 for not highlight
+void LibMain::DisplayHilight(uint8_t position, uint8_t row, uint8_t color)  // row is 0 top, 1 mid, 3 bot, color is 1 for highlight, 0 for not highlight
 {
     uint8_t knobcolor[] = BOTBAR_HILIGHT_SYSEX;
     knobcolor[KNOB_Column] = position;
+    knobcolor[10] = row;
     knobcolor[KNOB_Data] = color;
     sendMidiMessage(knobcolor, sizeof(knobcolor));
 }
 
+void LibMain::DisplayBoxColor(uint8_t position, uint8_t row, int color)
+{
+    uint8_t knobcolor[] = BOXRGB_SYSEX;
+    knobcolor[8] = position;
+    knobcolor[10] = row;
+    knobcolor[11] = (uint8_t)(color >> 17 & 0x7f);
+    knobcolor[12] = (uint8_t)(color >> 9 & 0x7f);
+    knobcolor[13] = (uint8_t)(color >> 1 & 0x7f);
+    sendMidiMessage(knobcolor, sizeof(knobcolor));
+}
 
-void LibMain::DisplayText(uint8_t column, uint8_t row, std::string text)  // top row = 0, bottom = 3
+void LibMain::DisplayText(uint8_t column, uint8_t row, std::string text)  // top row = 0, bottom = 3 in Knob mode, 0 - 5 in Box mode
 {
     std::string hexmessage, subtext, binmessage;
 
@@ -109,7 +127,7 @@ void LibMain::DisplayText(uint8_t column, uint8_t row, std::string text)  // top
 
 // The following three ShowKnobXXX() routines are unused for now because the SLMKIII screen gets glitchy and drops items if we set them all
 // in succession using these sysex calls.  Instead we do it all in the DisplayKnobs() routine all in one group.
-void LibMain::ShowKnobColor(uint8_t position, uint8_t color)
+/* void LibMain::ShowKnobColor(uint8_t position, uint8_t color)
 {
     uint8_t knobcolor[] = KNOB_COLOR_SYSEX;
     knobcolor[KNOB_Column] = position;
@@ -125,7 +143,8 @@ void LibMain::ShowKnobLabel(uint8_t column, const std::string label)
 void LibMain::ShowKnobCaption(uint8_t column, const std::string label)
 {
     DisplayText(column, 1, label);
-}
+} */
+
 
 void LibMain::SetButtonColor(uint8_t button, uint8_t color)  // make and send midi message
 {
@@ -169,20 +188,40 @@ void LibMain::DisplayWidgetValue(const SurfaceRow& Row, uint8_t column, int valu
 
 void LibMain::DisplayWidgetCaption(const SurfaceRow& Row, uint8_t column, std::string line1, std::string line2)
 {
-    if (Row.Type == KNOB_TYPE)
+    if (Row.Type == KNOB_TYPE && Surface.DisplayLayout == KNOB_LAYOUT)
     {
         DisplayText(column, 1, line1);
         // DisplayText(column, 0, line2);
     }
     else if (Row.Type == BUTTON_TYPE) Notify(line1, line2);
-    else if (Row.Type == PAD_TYPE) Notify(line1, line2);
+    else if (Row.Type == PAD_TYPE)
+    {
+        if (Surface.DisplayLayout == BOX_LAYOUT)
+        {
+            if (column < 8)
+            {
+                DisplayText(column, 0, line2);
+                DisplayText(column, 1, line1);
+            }
+            else
+            {
+                DisplayText(column - 8, 2, line2);
+                DisplayText(column - 8, 3, line1);
+            }
+        }
+        else Notify(line1, line2);
+    }
+
 }
 
 
 void LibMain::DisplayRow(SurfaceRow row)
 {
     ResetBankIndicators(row);
-    if (row.Type == KNOB_TYPE) DisplayKnobs(row);
+    if (row.Type == KNOB_TYPE)
+    {
+        DisplayKnobs(row);
+    }
     else if (row.Type == BUTTON_TYPE || row.Type == PAD_TYPE) DisplayButtons(row, 0, 16);
 }
 

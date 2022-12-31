@@ -35,7 +35,7 @@ void LibMain::DisplayButtons(SurfaceRow row, uint8_t firstbutton, uint8_t number
             {
                 Label = getWidgetCaption(widgetname);
                 LitColor = getWidgetFillColor(widgetname); // will use this for the right bar color
-                DimColor = getWidgetOutlineColor(widgetname);  // decided not to use this because I tend to show the _i widgets and it looks silly with outline colors
+                DimColor = getWidgetOutlineColor(widgetname);  
 
                 // check for parameters on "_i" widget for the group
                 std::vector< std::string> name_segments = ParseWidgetName(Label, '_');
@@ -84,6 +84,16 @@ void LibMain::DisplayButtons(SurfaceRow row, uint8_t firstbutton, uint8_t number
                     DisplayWidgetValue(row, x, widget.RgbDimColor);
                 }
                 
+
+                if (row.Type == PAD_TYPE && Surface.DisplayLayout == BOX_LAYOUT)
+                {
+                    DisplayBoxColor(widget.Column < 8 ? widget.Column : widget.Column - 8, (uint8_t)widget.Column / 8, widget.RgbLitColor);
+                    if (widget.Column < 8) DisplayHilight(widget.Column, 0, widget.Value > 0.0 ? (uint8_t)1 : (uint8_t)0);
+                    else DisplayHilight(widget.Column - 8, 1, widget.Value > 0.0 ? (uint8_t)1 : (uint8_t)0);
+
+                    DisplayWidgetCaption(Surface.Row[widget.RowNumber], widget.Column, widget.TextValue, widget.Caption);
+                }
+
             }
             else  // we end up here if the widget doesn't exist.
             {
@@ -102,27 +112,35 @@ void LibMain::DisplayButtons(SurfaceRow row, uint8_t firstbutton, uint8_t number
         {
             DisplayWidgetValue(row, x, (int) SLMKIII_BLACK);
         }
+        if (row.Type == PAD_TYPE && Surface.DisplayLayout == BOX_LAYOUT)
+        {
+            ClearBoxArea();
+        }
     }
-
 }
 
-
-// Returns the color to make a widget based on the widget's GetWidgetValue() and any parameters set for the widget on related "_p" widgets
-/*  int LibMain::getWidgetRGBColor(std::string widgetname, double value)
+// Clears the Box Area diplay (top two rows)
+void LibMain::ClearBoxArea()
 {
-    int LitColor = 0xA0A0A0, DimColor = 0x202020;
-    std::string Caption, Extras, Label;
+ 
+    SetButtonColor(MKIII_SCENE_UP, 0);  // color the bank up/down arrows on the SL MK3
+    SetButtonColor(MKIII_SCENE_DOWN, 0);
 
-    // check for an extra properties widget on widgetname_P (e.g., sl_b_1_1_p) 
-    if (widgetExists(widgetname + "_p"))
+    for (uint8_t x = 0; x <= 7; x++)
     {
-        LitColor = getWidgetFillColor(widgetname + "_p");
-        DimColor = getWidgetOutlineColor(widgetname + "_p");
-    }
 
-    if (value != (double)0.0) return LitColor;
-    else return DimColor;
-} */
+        DisplayBoxColor(x, 0, 0);
+        DisplayBoxColor(x, 1, 0);
+
+        DisplayHilight(x, 0, 0);
+        DisplayHilight(x, 1, 0);
+
+        DisplayWidgetCaption(Surface.Row[PAD_ROW], x, "", "");
+        DisplayWidgetCaption(Surface.Row[PAD_ROW], x+8, "", "");
+
+    }
+}
+
 
 // Returns the color to make a widget based on the widget's GetWidgetValue() and any parameters set for the widget on related "_p" widgets
 int LibMain::getWidgetRGBColor(SurfaceWidget widget, double value)
@@ -144,7 +162,7 @@ SurfaceWidget LibMain::PopulateWidget(std::string widgetname, double passed_valu
 SurfaceWidget LibMain::PopulateWidget(std::string widgetname)
 {
     SurfaceWidget widget;
-    std::string control_number, extras, pwidgetname;
+    std::string control_number, pcaption, pwidgetname;
 
     if (widgetExists(widgetname))
     {
@@ -217,7 +235,8 @@ SurfaceWidget LibMain::PopulateWidget(std::string widgetname)
                             widget.SurfacePrefix + "_" + widget.WidgetID + "p_" + widget.BankID + "_" + control_number;
                         if (widgetExists(pwidgetname))
                         {
-                            widget.Caption = getWidgetCaption(pwidgetname);
+                            pcaption = getWidgetCaption(pwidgetname);
+                            if (! pcaption.empty() ) { widget.Caption = pcaption; }
                             widget.RgbLitColor = getWidgetFillColor(pwidgetname);  // for knobs LitColor is the knob color, DimColor is top bar color
                             widget.RgbDimColor = getWidgetOutlineColor(pwidgetname);
                         }

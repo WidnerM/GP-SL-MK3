@@ -52,7 +52,18 @@ void LibMain::ProcessButton(uint8_t button, uint8_t value)  // processes a midi 
 
         if (button == MKIII_OPTIONS) // use this to toggle knob/box display on center screen
         {
-            Surface.ToggleDisplayLayout();
+            if (Surface.ToggleDisplayLayout() == KNOB_LAYOUT)
+            {
+                SetDisplayLayout();
+                DisplayBottom(false); // to show songs/racks/etc.               
+                DisplayRow(Surface.Row[KNOB_ROW]);
+            }
+            else
+            {
+                SetDisplayLayout();
+                DisplayBottom(false); // to show songs/racks/etc.
+                DisplayRow(Surface.Row[PAD_ROW]);
+            }
         }
 
         // use this to toggle between seeing racks/variation or songs/songparts depending on mode

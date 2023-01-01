@@ -30,9 +30,10 @@ void LibMain::DisplayKnobs(SurfaceRow row)
         SetButtonRGBColor(MKIII_DISPLAY_UP_SYSEX, GetBankRGBColor(row, row.PreviousBank()));  // color the bank up/down arrows on the SL MK3
         SetButtonRGBColor(MKIII_DISPLAY_DOWN_SYSEX, GetBankRGBColor(row, row.NextBank()));
 
-        // check for the bank parameters (color, bank name / caption) on the bank select widget
-        // these serve as defaults, but will be overriden if a "p" widget exists for each individual widget
-        widgetname = row.WidgetPrefix + "_" + row.BankIDs[row.ActiveBank] + "_i";
+        // check for the bank parameters (color, bank name / caption) on the bank parameter widget or _i widget
+        // these serve as defaults, but will be overriden if a "p" widget exists for individual widgets
+        widgetname = row.WidgetPrefix + "p_" + row.BankIDs[row.ActiveBank];
+        if (!widgetExists(widgetname)) { widgetname = row.WidgetPrefix + "_" + row.BankIDs[row.ActiveBank] + "_i"; }
         if (widgetExists(widgetname))
         {
             Label = getWidgetCaption(widgetname);

@@ -5,8 +5,9 @@
 std::vector<std::string> panelNames = { "Double Knobs", "Mix and Pads" };
 std::vector<std::string> relativePanelLocations = { "SLMK3DoubleKnobs.gppanel", "SLMK3MixAndPads.gppanel"};
 
-
-std::string pathToMe; // This needs to be initialized from the initialization secttion of the LibMain class so it can be used in the standalone functions directly below
+// This needs to be initialized from the initialization section of the LibMain class so it can be used in
+// the standalone functions directly below
+std::string pathToMe;
 
 int LibMain::GetPanelCount()
 {

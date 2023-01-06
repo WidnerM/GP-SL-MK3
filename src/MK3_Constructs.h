@@ -13,15 +13,17 @@
 #define MIDI_OUT_WIDGETNAME "sl_midiout"
 #define SL_MIDI_KEYLIGHTS   "SL Keylights"
 
-#define THIS_PREFIX "sl"
+/* #define THIS_PREFIX "sl"
 #define BUTTON_PREFIX "sl_b"
 #define FADER_PREFIX "sl_f"
 #define KNOB_PREFIX "sl_k"
+#define ZONE_PREFIX "sl_zone"
 #define TRANSPORT_PREFIX "sl_t"
 #define KNOB "k"
 #define FADER "f"
 #define BUTTON "b"
 #define PAD "p"
+#define ZONE "zone" */
 
 #define SLMK3_SYS_HEADER "F0 00 20 29 02 0A 01 "
 #define SLMK3_SYS_ENDER "F7"

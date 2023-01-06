@@ -10,25 +10,29 @@
 #define BUTTON_PREFIX "sl_b"
 #define FADER_PREFIX "sl_f"
 #define PAD_PREFIX "sl_p"
-#define ROW_PREFIX_ARRAY {KNOB_PREFIX, BUTTON_PREFIX, FADER_PREFIX, PAD_PREFIX}
+#define ZONE_PREFIX "sl_zone"
+#define ROW_PREFIX_ARRAY {KNOB_PREFIX, BUTTON_PREFIX, FADER_PREFIX, PAD_PREFIX, ZONE_PREFIX}
 
 #define KNOB_TYPE "Knob"
 #define BUTTON_TYPE "Button"
 #define FADER_TYPE "Fader"
 #define PAD_TYPE "Pad"
-#define ROW_TYPE_ARRAY {KNOB_TYPE, BUTTON_TYPE, FADER_TYPE, PAD_TYPE}
-#define ROW_LABEL_ARRAY { "Knob", "Button", "Fader", "Pad"}
+#define ZONE_TYPE "Zone"
+#define ROW_TYPE_ARRAY {KNOB_TYPE, BUTTON_TYPE, FADER_TYPE, PAD_TYPE, ZONE_TYPE}
+#define ROW_LABEL_ARRAY { "Knob", "Button", "Fader", "Pad", "Zone"}
 
 #define KNOB_TAG "k"
 #define BUTTON_TAG "b"
 #define FADER_TAG "f"
 #define PAD_TAG "p"
-#define TAG_ARRAY {KNOB_TAG, BUTTON_TAG, FADER_TAG, PAD_TAG }
+#define ZONE_TAG "zone"
+#define TAG_ARRAY {KNOB_TAG, BUTTON_TAG, FADER_TAG, PAD_TAG, ZONE_TAG }
 
 #define KNOB_ROW 0
 #define BUTTON_ROW 1
 #define FADER_ROW 2
 #define PAD_ROW 3
+#define ZONE_ROW 4
 
 #define BOTTOM_MODES 5 // number of different possible modes for bottom display row
 #define SHOW_SONGS 0
@@ -90,7 +94,7 @@ public:
 	uint8_t MidiCommand = 0x90; // midi command from the control surface that corresponds to this row
 	uint8_t FirstID = 0;  // the first ID that corresponds to the row, eg. note number 0x64.  Elements of a control row must have sequential IDs
 	uint8_t FirstIDsysex = 0;  // the first ID if we address it using sysex instead of NoteOn/CC
-    int LitColor = 0x4F0000, DimColor = 0x100000;
+    // int LitColor = 0x4F0000, DimColor = 0x100000;
 
 	bool BankValid() // is the bank indicated by ActiveBank a valid bank?
 	{
@@ -194,8 +198,8 @@ public:
 class SurfaceClass
 {
 public:
-	SurfaceRow Row[4];
-	uint8_t NumRows = 4;
+	SurfaceRow Row[5];
+	uint8_t NumRows = 5;
 
 	uint8_t DisplayLayout = KNOB_LAYOUT;   // Is display showing Knob Layout or Box Layout (which shows three groups of two lines per display) 
 	uint8_t BottomMode = SHOW_RACKSPACES;  // What to show along bottom of display when in Knob View mode
@@ -206,7 +210,7 @@ public:
 	uint8_t BottomHalfColor[BOTTOM_MODES] = { SLMKIII_ORANGE_HALF, SLMKIII_BLUE_HALF, SLMKIII_PURPLE_HALF, SLMKIII_MINT_HALF, SLMKIII_GREEN_HALF };
 
 
-	int syncState = 0;  // is our current model in sync with the device.  semi-deprecated
+	int syncState = 0;  // is our current model in sync with the device.  deprecated
 
 	// following are not presently implemented.  The idea is to use the main displays to show things other than the knobs.  e.g., song list, pad assignments, etc
 	int ToggleDisplayLayout() { if (DisplayLayout == KNOB_LAYOUT) DisplayLayout = BOX_LAYOUT; else DisplayLayout = KNOB_LAYOUT; return DisplayLayout; }
@@ -223,10 +227,10 @@ public:
 		std::string row_tags[] = TAG_ARRAY;
 		std::string row_types[] = ROW_TYPE_ARRAY;
 		std::string row_labels[] = ROW_LABEL_ARRAY;
-		uint8_t midi_commands[] = { 0xbf, 0xbf, 0xbf, 0x9f };
-		int row_columns[] = { 8, 16, 8, 16 };
-		uint8_t first_midi[] = { MKIII_KNOB_BASE, MKIII_BUTTON_BASE, MKIII_FADER_BASE, MKIII_PAD_BASE };
-		uint8_t first_sysex[] = { MKIII_KNOB_BASE, MKIII_BUTTON_BASE_SYSEX, MKIII_FADER_BASE_SYSEX, MKIII_PAD_BASE_SYSEX };
+		uint8_t midi_commands[] = { 0xbf, 0xbf, 0xbf, 0x9f, 0x9f };
+		int row_columns[] = { 8, 16, 8, 16, 2 };
+		uint8_t first_midi[] = { MKIII_KNOB_BASE, MKIII_BUTTON_BASE, MKIII_FADER_BASE, MKIII_PAD_BASE, MKIII_KEY_BASE };
+		uint8_t first_sysex[] = { MKIII_KNOB_BASE, MKIII_BUTTON_BASE_SYSEX, MKIII_FADER_BASE_SYSEX, MKIII_PAD_BASE_SYSEX, MKIII_KEY_BASE_SYSEX };
 
 		// basic Surface structure initializations
 		for (x = 0; x < std::size(Row); x++)
@@ -261,7 +265,7 @@ public:
 	int IdentifySurfaceRow(std::string rowidentifier) {
 		int x;
 
-		for (x = 0; x < NumRows; x++)
+		for (x = 0; x < std::size(Row); x++)
 		{
 			if (Row[x].WidgetID == rowidentifier)
 				return x;
@@ -271,7 +275,7 @@ public:
 
 	bool RowValid(int rownum)
 	{
-		return (rownum >= 0 && rownum < NumRows);
+		return (rownum >= 0 && rownum < std::size(Row));
 	}
 };
 

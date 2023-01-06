@@ -112,3 +112,7 @@
 #define MKIII_PAD14				0x75
 #define MKIII_PAD15				0x76
 #define MKIII_PAD16				0x77
+
+// Key identifiers for key lights
+#define MKIII_KEY_BASE			0x00
+#define MKIII_KEY_BASE_SYSEX	0x44

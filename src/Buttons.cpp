@@ -185,46 +185,33 @@ SurfaceWidget LibMain::PopulateWidget(std::string widgetname)
                 // is it a valid row identifier for this Surface?
                 if (widget.RowNumber >= 0)
                 {
-
-                    // check if it's a row parameters widget, and flag the widget as a RowParameterWidget if it is
-                    // This is deprecated
-                    /* if (control_number == "p")
+                    try
                     {
-                        widget.IsRowParameterWidget = true;
-                        pwidgetname = widgetname;
-                        if (widget.RowNumber >= 0 && widget.RowNumber < Surface.NumRows)
-                            widget.Validated = true;
-                    }
-
-                    // if not, check for a valid Column
-                    else */
-                        try
+                        widget.IsRowParameterWidget = false;
+                        widget.Column = std::stoi(control_number);
+                        if (widget.RowNumber >= 0 && widget.RowNumber < std::size(Surface.Row))
                         {
-                            widget.IsRowParameterWidget = false;
-                            widget.Column = std::stoi(control_number);
-                            if (widget.RowNumber >= 0 && widget.RowNumber < Surface.NumRows)
+                            if (widget.Column < Surface.Row[widget.RowNumber].Columns)
                             {
-                                if (widget.Column < Surface.Row[widget.RowNumber].Columns)
-                                {
-                                    widget.IsSurfaceItemWidget = true;
-                                    widget.TextValue = getWidgetTextValue(widgetname);
-                                    widget.Caption = getWidgetCaption(widgetname);
+                                widget.IsSurfaceItemWidget = true;
+                                widget.TextValue = getWidgetTextValue(widgetname);
+                                widget.Caption = getWidgetCaption(widgetname);
 
-                                    // we've checked for valid Surface prefix, row type, and valid column number for the
-                                    // row, so it's a valid widget we don't check that the BankID is valid because by
-                                    // definition a bank is valid if there's a valid widget for it
-                                    widget.Validated = true;
-                                    // pwidgetname = widgetname + "_p";
-                                }
+                                // we've checked for valid Surface prefix, row type, and valid column number for the
+                                // row, so it's a valid widget we don't check that the BankID is valid because by
+                                // definition a bank is valid if there's a valid widget for it
+                                widget.Validated = true;
+                                // pwidgetname = widgetname + "_p";
                             }
                         }
-                        catch (...) // catch blow ups, such as stoi() if the widget name doesn't have a number where we
-                                    // need a number
-                        {
-                            widget.Column = -1;
-                            widget.IsSurfaceItemWidget = false;
-                            widget.Validated = false;
-                        }
+                    }
+                    catch (...) // catch blow ups, such as stoi() if the widget name doesn't have a number where we
+                                // need a number
+                    {
+                        widget.Column = -1;
+                        widget.IsSurfaceItemWidget = false;
+                        widget.Validated = false;
+                    }
 
                     // look for extra parameters on a parameter widget if it's a valid surface item widget
                     if (widget.Validated)

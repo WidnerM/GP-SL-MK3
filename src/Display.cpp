@@ -63,13 +63,69 @@ void LibMain::Notify(std::string text, std::string line2)
 // lights keylights on SL MKIII
 void LibMain::Keylights(const uint8_t* data, int length)
 {
-    if (data[1] >= 0x18 && data[1] < 0x54) { // 0x44 to 0x80 for sysex or 00 to 3c  | key range is 0x18 - 0x54 but 0x54 is actually pad up arrow
+    if (data[1] >= 0x18 && data[1] <= 0x54) { // 0x44 to 0x80 for sysex or 00 to 3c  | key range is 0x18 - 0x54 but 0x54 is actually pad up arrow
         // if (data[0] == 0x90) sendMidiMessage(GPMidiMessage::makeNoteOnMessage(data[1], data[2], 16));
         // if (data[0] == 0x80) sendMidiMessage(GPMidiMessage::makeNoteOffMessage(data[1], data[2], 16));
         uint8_t red = data[2];
         uint8_t blue = 0x7f - data[2];
         if (data[0] == 0x90) SetButtonRGBColor(data[1] + 0x2c, ( blue < 90 ? 0x010000 * red : 0x00) + (red > 90 ? 0x00 : blue ));
         if (data[0] == 0x80) SetButtonRGBColor(data[1] + 0x2c, 0x000000);
+    }
+}
+
+// lights keylights on SL MKIII
+bool LibMain::LightKey(uint8_t note, int color)
+{
+    if (note >= 36 && note <= 96) { // 0x44 to 0x7f for sysex, 68-127 decimaal | runs out of space for last key
+        SetButtonRGBColor(note + 32, color);
+        return true;
+    }
+    else return false;
+}
+
+void LibMain::ClearKeylights()
+{
+    for (uint8_t x = 36; x < 96; x++)
+    {
+        SetButtonRGBColor(x + 32, 0);
+    }
+}
+
+void LibMain::DisplayZones(SurfaceRow row)
+{
+    int keycolors[127] = {}; // initialize to all zeros
+    std::string widgetname;
+    uint8_t x, banknum, minkey, maxkey;
+    int color;
+
+    if (! row.BankValid()) ClearKeylights();
+    else
+    {
+        
+        for (banknum = 0; banknum < row.BankIDs.size(); banknum++)
+        {
+            widgetname = row.WidgetPrefix + "_" + row.BankIDs[banknum] + "_0";
+            if (widgetExists(widgetname))
+            {
+                color = getWidgetFillColor(widgetname);
+                minkey = (uint8_t) (getWidgetValue(widgetname) * 127 + 0.5);
+                maxkey = minkey;
+
+                widgetname = row.WidgetPrefix + "_" + row.BankIDs[banknum] + "_1";
+                if (widgetExists(widgetname))
+                {
+                    maxkey = (uint8_t)(getWidgetValue(widgetname) * 127 + 0.5);
+                }
+            }
+            for (x = minkey; x <= maxkey; x++)
+            {
+                keycolors[x] += color;
+            }
+        }
+        for (x = 36 ; x <= 96; x++)
+        {
+            LightKey(x, keycolors[x]);
+        }
     }
 }
 
@@ -223,6 +279,7 @@ void LibMain::DisplayRow(SurfaceRow row)
         DisplayKnobs(row);
     }
     else if (row.Type == BUTTON_TYPE || row.Type == PAD_TYPE) DisplayButtons(row, 0, 16);
+    else if (row.Type == ZONE_TYPE) { DisplayZones(row); }
 }
 
 void LibMain::ClearDisplayRow(SurfaceRow row)

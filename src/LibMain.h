@@ -70,6 +70,7 @@ public:
     void Notify(std::string text, std::string line2);
     void DisplayText(uint8_t column, uint8_t row, std::string text);
     void Keylights(const uint8_t* data, int length);
+    bool LightKey(uint8_t note, int color);
 
     std::string GPColorToSLColorHex(int color);
     void SetButtonColor(uint8_t button, uint8_t color);
@@ -90,7 +91,9 @@ public:
     void DisplayWidgetCaption(const SurfaceRow& Row, uint8_t column, std::string value, std::string line2 = "");
 
     void DisplayRow(SurfaceRow row);
+    void DisplayZones(SurfaceRow row);
     void ClearDisplayRow(SurfaceRow row);
+    void ClearKeylights();
 
 
     // from Inputs.cpp
@@ -243,7 +246,10 @@ public:
         // scriptLog("On W.Val changed: " + widgetname + std::to_string (newValue),1);
         widget = PopulateWidget(widgetname, newValue);
 
-        if (widget.IsSurfaceItemWidget)  // some widgets we listen for may not display on the control surface
+        if (widget.RowNumber == ZONE_ROW)
+            DisplayZones(Surface.Row[ZONE_ROW]);
+
+        else if (widget.IsSurfaceItemWidget)  // some widgets we listen for may not display on the control surface
         {
             // if the GP widget is not in the active bank on the control surface we don't need to display it
             if ( widget.BankID == Surface.Row[widget.RowNumber].ActiveBankID() && Surface.Row[widget.RowNumber].Showing == 1)
@@ -426,7 +432,6 @@ public:
         // scriptLog("SL identified " + std::to_string(Surface.Row[KNOB_ROW].BankIDs.size()) + " knob banks", 1);
         // scriptLog("SL identified " + std::to_string(Surface.Row[BUTTON_ROW].BankIDs.size()) + " button banks", 1);
 
-
         setActiveBank(Surface.Row[KNOB_ROW]);
         DisplayRow(Surface.Row[KNOB_ROW]);
 
@@ -435,6 +440,9 @@ public:
 
         setActiveBank(Surface.Row[PAD_ROW]);
         DisplayRow(Surface.Row[PAD_ROW]);
+
+        setActiveBank(Surface.Row[ZONE_ROW]);
+        DisplayRow(Surface.Row[ZONE_ROW]);
 
         setActiveBank(Surface.Row[FADER_ROW]);
         Surface.Row[FADER_ROW].Showing = 0;
@@ -475,6 +483,9 @@ public:
 
         setActiveBank(Surface.Row[PAD_ROW]);
         DisplayRow(Surface.Row[PAD_ROW]);
+
+        setActiveBank(Surface.Row[ZONE_ROW]);
+        DisplayRow(Surface.Row[ZONE_ROW]);
 
         setActiveBank(Surface.Row[FADER_ROW]);
         Surface.Row[FADER_ROW].Showing = 0;
@@ -517,7 +528,6 @@ public:
         DisplayText(5, 1, "  Music");
         DisplayText(6, 1, " ");
         DisplayText(7, 1, " ");
-
     }
 
     // Called when shutting down
@@ -552,6 +562,7 @@ public:
         }
 
         ClearDisplayRow(Surface.Row[PAD_ROW]);
+        ClearKeylights();
     }
 
     // Initialization of the dll plugin

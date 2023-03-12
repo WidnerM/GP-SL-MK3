@@ -95,15 +95,23 @@ void LibMain::ProcessButton(uint8_t button, uint8_t value)  // processes a midi 
         // the display DOWN button shifts to the next HIGHER knob bank
         else if (button == MKIII_DISPLAY_DOWN)  
         {
-            RowNextBank(Surface.Row[KNOB_ROW]);
-            DisplayRow(Surface.Row[KNOB_ROW]);
+            // RowNextBank(Surface.Row[KNOB_ROW]);
+            // DisplayRow(Surface.Row[KNOB_ROW]);
+            if (Surface.Row[KNOB_ROW].IncrementBank())
+            {
+                SyncBankIDs(KNOB_ROW);
+            }
         }
 
         // UP button goes to next LOWER knob bank
         else if (button == MKIII_DISPLAY_UP)  
         {
-            RowPreviousBank(Surface.Row[KNOB_ROW]);
-            DisplayRow(Surface.Row[KNOB_ROW]);
+            // RowPreviousBank(Surface.Row[KNOB_ROW]);
+            // DisplayRow(Surface.Row[KNOB_ROW]);
+            if (Surface.Row[KNOB_ROW].DecrementBank())
+            {
+                SyncBankIDs(KNOB_ROW);
+            }
         }
 
         // change Pad banks
@@ -134,6 +142,19 @@ void LibMain::ProcessButton(uint8_t button, uint8_t value)  // processes a midi 
             DisplayRow(Surface.Row[BUTTON_ROW]);
         }
 
+        // change fader banks
+        else if (button == MKIII_SCENE_2)
+        {
+            RowNextBank(Surface.Row[FADER_ROW]);
+            DisplayRow(Surface.Row[FADER_ROW]);
+        }
+
+        // UP button goes to next LOWER knob bank
+        else if (button == MKIII_SCENE_1)
+        {
+            RowPreviousBank(Surface.Row[FADER_ROW]);
+            DisplayRow(Surface.Row[FADER_ROW]);
+        }
 
         else if ((button >= MKIII_DISPLAY_BUTTON_1) && (button <= MKIII_DISPLAY_BUTTON_8))
         {

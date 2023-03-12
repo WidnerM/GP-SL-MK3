@@ -166,7 +166,7 @@ int LibMain::GetBankRGBColor(SurfaceRow row, int bankindex)
     int color = 0x101010;
     std::string widgetname;
 
-    if (row.BankValid() && bankindex >= 0 && bankindex != row.ActiveBank)
+    if (row.BankValid() && bankindex >= 0 )
     {
         widgetname = row.WidgetPrefix + (std::string)"_" + row.BankIDs[bankindex] + "_i";
         if (widgetExists(widgetname)) {

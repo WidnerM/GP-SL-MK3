@@ -100,15 +100,14 @@ void LibMain::DisplayZones(SurfaceRow row)
 
     if (! row.BankValid()) ClearKeylights();
     else
-    {
-        
+    {        
         for (banknum = 0; banknum < row.BankIDs.size(); banknum++)
         {
             widgetname = row.WidgetPrefix + "_" + row.BankIDs[banknum] + "_0";
             if (widgetExists(widgetname))
             {
                 color = getWidgetFillColor(widgetname);
-                minkey = (uint8_t) (getWidgetValue(widgetname) * 127 + 0.5);
+                minkey = (uint8_t)(getWidgetValue(widgetname) * 127 + 0.5);
                 maxkey = minkey;
 
                 widgetname = row.WidgetPrefix + "_" + row.BankIDs[banknum] + "_1";
@@ -116,10 +115,10 @@ void LibMain::DisplayZones(SurfaceRow row)
                 {
                     maxkey = (uint8_t)(getWidgetValue(widgetname) * 127 + 0.5);
                 }
-            }
-            for (x = minkey; x <= maxkey; x++)
-            {
-                keycolors[x] += color;
+                for (x = minkey; x <= maxkey; x++)
+                {
+                    keycolors[x] += color;
+                }
             }
         }
         for (x = 36 ; x <= 96; x++)
@@ -280,6 +279,12 @@ void LibMain::DisplayRow(SurfaceRow row)
     }
     else if (row.Type == BUTTON_TYPE || row.Type == PAD_TYPE) DisplayButtons(row, 0, 16);
     else if (row.Type == ZONE_TYPE) { DisplayZones(row); }
+    else if (row.Type == FADER_TYPE)
+    {
+        ClearDisplayRow(row);
+        SetButtonRGBColor(MKIII_SCENE_1_SYSEX, GetBankRGBColor(row, row.ActiveBank));
+        SetButtonRGBColor(MKIII_SCENE_2_SYSEX, GetBankRGBColor(row, row.ActiveBank));
+    }
 }
 
 void LibMain::ClearDisplayRow(SurfaceRow row)
@@ -289,5 +294,16 @@ void LibMain::ClearDisplayRow(SurfaceRow row)
     for (column = 0; column <= row.Columns -1 ; column++)
     {
         DisplayWidgetValue(row, column, (int)0x000000);
+    }
+}
+
+void LibMain::SyncBankIDs(uint8_t syncrow)
+{
+    if (Surface.Row[syncrow].BankValid()) {
+        std::string rowname = Surface.Row[syncrow].ActiveBankID();
+        for (int x = 0; x < (sizeof(Surface.Row) / sizeof(SurfaceRow))-1; x++)
+        {
+            if (Surface.Row[x].makeActiveBank(rowname)) DisplayRow(Surface.Row[x]);
+        }
     }
 }

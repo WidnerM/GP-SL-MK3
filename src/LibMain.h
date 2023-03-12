@@ -95,6 +95,8 @@ public:
     void ClearDisplayRow(SurfaceRow row);
     void ClearKeylights();
 
+    void SyncBankIDs(uint8_t syncrow);
+
 
     // from Inputs.cpp
     void ProcessButton(uint8_t button, uint8_t value);
@@ -445,8 +447,8 @@ public:
         DisplayRow(Surface.Row[ZONE_ROW]);
 
         setActiveBank(Surface.Row[FADER_ROW]);
-        Surface.Row[FADER_ROW].Showing = 0;
-        ClearDisplayRow(Surface.Row[FADER_ROW]);  // we clear the fader LEDs to indicate the widgets aren't aligned to the faders
+        // Surface.Row[FADER_ROW].Showing = 0;
+        DisplayRow(Surface.Row[FADER_ROW]);
 
         // scriptLog("Set knob activebankt " + std::to_string(Surface.Row[KNOB_ROW].ActiveBank), 1);
         // ResetKnobBankIndicators();

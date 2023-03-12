@@ -65,6 +65,8 @@
 
 #define MKIII_SCENE_1           0x53
 #define MKIII_SCENE_2           0x54
+#define MKIII_SCENE_1_SYSEX           0x02
+#define MKIII_SCENE_2_SYSEX           0x03
 #define MKIII_SCENE_UP          0x55
 #define MKIII_SCENE_DOWN        0x56
 #define MKIII_SCENE_UP_SYSEX    0x00
@@ -87,6 +89,8 @@
 
 #define MKIII_TRANSPORT_REWIND  0x70
 #define MKIII_TRANSPORT_FORWARD 0x71
+#define MKIII_TRANSPORT_REWIND_SYSEX  0x21
+#define MKIII_TRANSPORT_FORWARD_SYSEX 0x22
 #define MKIII_TRANSPORT_STOP    0x72
 #define MKIII_TRANSPORT_PLAY    0x73
 #define MKIII_TRANSPORT_LOOP    0x74

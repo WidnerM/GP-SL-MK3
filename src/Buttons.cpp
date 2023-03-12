@@ -223,7 +223,11 @@ SurfaceWidget LibMain::PopulateWidget(std::string widgetname)
                         if (widgetExists(pwidgetname))
                         {
                             pcaption = getWidgetCaption(pwidgetname);
-                            if (! pcaption.empty() ) { widget.Caption = pcaption; }
+                            if (! pcaption.empty() )
+                            { 
+                                size_t pos = pcaption.find("_");
+                                widget.Caption = pcaption.substr(0, pos);
+                            }
                             widget.RgbLitColor = getWidgetFillColor(pwidgetname);  // for knobs LitColor is the knob color, DimColor is top bar color
                             widget.RgbDimColor = getWidgetOutlineColor(pwidgetname);
                         }

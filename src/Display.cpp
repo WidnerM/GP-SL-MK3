@@ -93,7 +93,7 @@ void LibMain::ClearKeylights()
 
 void LibMain::DisplayZones(SurfaceRow row)
 {
-    int keycolors[127] = {}; // initialize to all zeros
+    unsigned int keycolors[128] = {}; // initialize to all zeros
     std::string widgetname;
     uint8_t x, banknum, minkey, maxkey;
     int color;
@@ -114,10 +114,11 @@ void LibMain::DisplayZones(SurfaceRow row)
                 if (widgetExists(widgetname))
                 {
                     maxkey = (uint8_t)(getWidgetValue(widgetname) * 127 + 0.5);
+
                 }
-                for (x = minkey; x <= maxkey; x++)
+                for (x = minkey; x <= maxkey & 0x7f; x++)
                 {
-                    keycolors[x] += color;
+                    keycolors[x] += color & 0x00ffffff;
                 }
             }
         }

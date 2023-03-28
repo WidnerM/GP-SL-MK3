@@ -224,7 +224,7 @@ public:
 
 
         
-    void OnGlobalPlayStateChanged(double playing) override
+    void OnGlobalPlayStateChanged(bool playing) override
     {
         // Light the Play transport button according to play state.
         // Having the Play button start/stp the global playhead is controlled in Inputs.cpp via widget named sl_t_p

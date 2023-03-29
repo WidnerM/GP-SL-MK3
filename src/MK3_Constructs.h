@@ -7,9 +7,9 @@
 #define DEVICE_CODE { 0x00, 0x20, 0x29, 0x01, 0x01, 0x00, 0x00 }
 
 #define EXTENSION_IDENTIFIER "SL MK3 extension"
-#define SL_MIDI_IN        "MIDIIN2 (Novation SL MkIII)"
+#define SL_MIDI_IN        "MIDIIN2 (Novation SL MkIII)", "Novation SL MkIII SL MkIII InControl"
 #define MIDI_IN_WIDGETNAME "sl_midiin"
-#define SL_MIDI_OUT       "MIDIOUT2 (Novation SL MkIII)"
+#define SL_MIDI_OUT       "MIDIOUT2 (Novation SL MkIII)", "Novation SL MkIII SL MkIII InControl"
 #define MIDI_OUT_WIDGETNAME "sl_midiout"
 #define SL_MIDI_KEYLIGHTS   "SL Keylights"
 

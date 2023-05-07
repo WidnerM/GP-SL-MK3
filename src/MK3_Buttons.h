@@ -88,13 +88,15 @@
 #define MKIII_TRACK_RIGHT       0x67
 
 #define MKIII_TRANSPORT_REWIND  0x70
-#define MKIII_TRANSPORT_FORWARD 0x71
 #define MKIII_TRANSPORT_REWIND_SYSEX  0x21
+#define MKIII_TRANSPORT_FORWARD 0x71
 #define MKIII_TRANSPORT_FORWARD_SYSEX 0x22
 #define MKIII_TRANSPORT_STOP    0x72
+#define MKIII_TRANSPORT_STOP_SYSEX 0x23
 #define MKIII_TRANSPORT_PLAY    0x73
 #define MKIII_TRANSPORT_LOOP    0x74
 #define MKIII_TRANSPORT_RECORD  0x75
+#define MKIII_TRANSPORT_RECORD_SYSEX  0x20
 
 
 // Pad note on numbers.  Can write colors to them by sending note on, channel 16, color as velocity

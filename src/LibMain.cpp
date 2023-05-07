@@ -83,6 +83,7 @@ void LibMain::InvokeMenu(int index)
             break;
         case 2:
             SetMidiInOutDevices();
+            Surface.DisplayLayout = KNOB_LAYOUT;
             Initialization();
             OnOpen();
             OnStatusChanged(GPStatus_GigFinishedLoading);

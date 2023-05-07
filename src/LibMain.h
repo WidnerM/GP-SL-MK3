@@ -447,8 +447,9 @@ public:
         DisplayRow(Surface.Row[ZONE_ROW]);
 
         setActiveBank(Surface.Row[FADER_ROW]);
-        // Surface.Row[FADER_ROW].Showing = 0;
-        DisplayRow(Surface.Row[FADER_ROW]);
+        Surface.Row[FADER_ROW].Showing = 0;  // this is to NOT show fader moves in the display notification area
+        ClearDisplayRow(Surface.Row[FADER_ROW]); // we clear the fader LEDs to indicate the widgets aren't aligned to the faders
+
 
         // scriptLog("Set knob activebankt " + std::to_string(Surface.Row[KNOB_ROW].ActiveBank), 1);
         // ResetKnobBankIndicators();
@@ -490,7 +491,7 @@ public:
         DisplayRow(Surface.Row[ZONE_ROW]);
 
         setActiveBank(Surface.Row[FADER_ROW]);
-        Surface.Row[FADER_ROW].Showing = 0;
+        Surface.Row[FADER_ROW].Showing = 0;  // this is to NOT show fader moves in the display notification area
         ClearDisplayRow(Surface.Row[FADER_ROW]); // we clear the fader LEDs to indicate the widgets aren't aligned to the faders
 
         // read variation name and post it in a Notify to the SL MKIII

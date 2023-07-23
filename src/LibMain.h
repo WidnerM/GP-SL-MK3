@@ -127,7 +127,7 @@ public:
 
     // from Buttons.cpp
     void DisplayButtons(SurfaceRow row, uint8_t firstbutton, uint8_t number);
-    // int getWidgetRGBColor(std::string widgetname, double value); // deprecated
+    void DisplayFaders(SurfaceRow row, uint8_t firstbutton, uint8_t number);
     int getWidgetRGBColor(SurfaceWidget widgetname, double value);
     void ClearBoxArea();
 
@@ -259,6 +259,10 @@ public:
                 // for everything but Knobs we need to translate the new widget value to a color for the surface LED
                 if (Surface.Row[widget.RowNumber].Type == KNOB_TYPE)
                     DisplayWidgetValue(Surface.Row[widget.RowNumber], widget.Column, newValue);
+                else if (Surface.Row[widget.RowNumber].Type == FADER_TYPE)
+                {   
+                    DisplayFaders(Surface.Row[widget.RowNumber], widget.Column, 1);
+                }
                 else
                 {
                     DisplayWidgetValue(Surface.Row[widget.RowNumber], widget.Column, getWidgetRGBColor(widget, newValue));
@@ -424,6 +428,7 @@ public:
         {
             Surface.Row[row].ActiveBank = -1;
             Surface.Row[row].BankIDs.clear();
+            // memset(Surface.Row[row].Last, 0, sizeof(Surface.Row[row].Last));
         }
 
         getWidgetList(globalwidgetlist, true);
@@ -447,8 +452,7 @@ public:
         DisplayRow(Surface.Row[ZONE_ROW]);
 
         setActiveBank(Surface.Row[FADER_ROW]);
-        Surface.Row[FADER_ROW].Showing = 0;  // this is to NOT show fader moves in the display notification area
-        ClearDisplayRow(Surface.Row[FADER_ROW]); // we clear the fader LEDs to indicate the widgets aren't aligned to the faders
+        DisplayRow(Surface.Row[FADER_ROW]); // we clear the fader LEDs to indicate the widgets aren't aligned to the faders
 
 
         // scriptLog("Set knob activebankt " + std::to_string(Surface.Row[KNOB_ROW].ActiveBank), 1);
@@ -491,8 +495,9 @@ public:
         DisplayRow(Surface.Row[ZONE_ROW]);
 
         setActiveBank(Surface.Row[FADER_ROW]);
-        Surface.Row[FADER_ROW].Showing = 0;  // this is to NOT show fader moves in the display notification area
-        ClearDisplayRow(Surface.Row[FADER_ROW]); // we clear the fader LEDs to indicate the widgets aren't aligned to the faders
+        DisplayRow(Surface.Row[FADER_ROW]);
+        // Surface.Row[FADER_ROW].Showing = 0;  // this is to NOT show fader moves in the display notification area
+        // ClearDisplayRow(Surface.Row[FADER_ROW]); // we clear the fader LEDs to indicate the widgets aren't aligned to the faders
 
         // read variation name and post it in a Notify to the SL MKIII
         // Notify("Variation: " + newIndex);

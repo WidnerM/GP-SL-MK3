@@ -422,7 +422,7 @@ void LibMain::ProcessKnob(uint8_t column, uint8_t value)  // processes a midi me
     }
 }
 
-void LibMain::ProcessFader(uint8_t column, uint8_t value)  // processes a midi message for a fader
+void LibMain::ProcessFader(uint8_t column, uint8_t value)  // processes a midi message from a fader
 {
     std::string widgetname, caption;
     double newValue, oldValue;
@@ -437,6 +437,7 @@ void LibMain::ProcessFader(uint8_t column, uint8_t value)  // processes a midi m
             {
                 oldValue = getWidgetValue(widgetname);
                 newValue = static_cast<double>(value) / static_cast<double>(127);
+                Surface.Row[FADER_ROW].Last[column] = (value & 0x7f);  // keep track that the physical fader and widget
                 if (abs(newValue - oldValue) < 0.04)
                 {
                     Surface.Row[FADER_ROW].Showing = 1;
@@ -445,8 +446,8 @@ void LibMain::ProcessFader(uint8_t column, uint8_t value)  // processes a midi m
                 }
                 else
                 {
-                    if (newValue > oldValue) { DisplayWidgetValue(Surface.Row[FADER_ROW], column, 0x008000); }
-                    else { DisplayWidgetValue(Surface.Row[FADER_ROW], column, 0x800000); }
+                    if (newValue > oldValue) { DisplayWidgetValue(Surface.Row[FADER_ROW], column, 0x001000); }
+                    else { DisplayWidgetValue(Surface.Row[FADER_ROW], column, 0x100000); }
                 }
             }
             else

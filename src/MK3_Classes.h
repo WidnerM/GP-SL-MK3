@@ -63,8 +63,6 @@ public:
 	bool IsSurfaceItemWidget = false;  // indicates the widget maps to a physical surface control
 	bool IsRowParameterWidget = false;  // things like names or resolutions on GP widgets that don't correspond to physical surface controls
 
-	bool Selected = false;  // deprecated
-
 	int RowNumber = -1;  // If this widget is associated with a Row, used primarily to determine if it's the active bank or not
 
 	double Value = 0.0;
@@ -91,6 +89,7 @@ public:
 	int ActiveBank = -1; // the index of the bank shown on and controlled by the controller
 	uint8_t Showing = 1; // show this row?  we only use this to not show the fader row in the notify area
 	uint8_t Columns = 8;
+	uint8_t Last[16] = { 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80 }; // for faders we track the last input.  >0x7f indicates we don't know it 
 	uint8_t MidiCommand = 0x90; // midi command from the control surface that corresponds to this row
 	uint8_t FirstID = 0;  // the first ID that corresponds to the row, eg. note number 0x64.  Elements of a control row must have sequential IDs
 	uint8_t FirstIDsysex = 0;  // the first ID if we address it using sysex instead of NoteOn/CC

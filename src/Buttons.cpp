@@ -119,6 +119,56 @@ void LibMain::DisplayButtons(SurfaceRow row, uint8_t firstbutton, uint8_t number
     }
 }
 
+void LibMain::DisplayFaders(SurfaceRow row, uint8_t firstbutton, uint8_t number)
+{
+    std::string widgetname;
+    SurfaceWidget widget;
+    double Value = 0;
+    int x;
+
+    // color the bank up/down arrows
+    SetButtonRGBColor(MKIII_SCENE_1_SYSEX, GetBankRGBColor(row, row.ActiveBank));
+    SetButtonRGBColor(MKIII_SCENE_2_SYSEX, GetBankRGBColor(row, row.ActiveBank));
+
+    if (row.BankValid())
+    {
+        for (x = firstbutton; x < firstbutton + number; x++)
+        {
+            widgetname = row.WidgetPrefix + "_" + row.BankIDs[row.ActiveBank] + "_" + std::to_string(x);
+            widget = PopulateWidget(widgetname);
+            if (widget.IsSurfaceItemWidget)
+            {
+                if (Surface.Row[widget.RowNumber].Last[widget.Column] > 0x7f)
+                {
+                    DisplayWidgetValue(Surface.Row[widget.RowNumber], widget.Column, (int)0);
+                }
+                else if (abs((Surface.Row[widget.RowNumber].Last[widget.Column]) - (int)(widget.Value * 127.0)) < 3)
+                {
+                    DisplayWidgetValue(Surface.Row[widget.RowNumber], widget.Column, widget.RgbLitColor);
+                }
+                else
+                {
+                    if ((int)(widget.Value * 127.0) < Surface.Row[widget.RowNumber].Last[widget.Column])
+                    {
+                        DisplayWidgetValue(Surface.Row[widget.RowNumber], widget.Column, (int)0x001000);
+                    }
+                    else { DisplayWidgetValue(Surface.Row[FADER_ROW], widget.Column, (int)0x100000); }
+                }
+
+            }
+        }
+    }
+    else
+    {
+        // turn them all off if there is no valid bank
+        for (x = 0; x < 16; x++)
+        {
+            DisplayWidgetValue(row, x, (int)SLMKIII_BLACK);
+        }
+    }
+}
+
+
 // Clears the Box Area diplay (top two rows)
 void LibMain::ClearBoxArea()
 {

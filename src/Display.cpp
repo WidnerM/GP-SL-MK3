@@ -116,7 +116,7 @@ void LibMain::DisplayZones(SurfaceRow row)
                     maxkey = (uint8_t)(getWidgetValue(widgetname) * 127 + 0.5);
 
                 }
-                for (x = minkey; x <= maxkey & 0x7f; x++)
+                for (x = minkey; x <= (maxkey & 0x7f); x++)
                 {
                     keycolors[x] += color & 0x00ffffff;
                 }
@@ -282,7 +282,7 @@ void LibMain::DisplayRow(SurfaceRow row)
     else if (row.Type == ZONE_TYPE) { DisplayZones(row); }
     else if (row.Type == FADER_TYPE)
     {
-        ClearDisplayRow(row);
+        DisplayFaders(row, 0, 8);
         SetButtonRGBColor(MKIII_SCENE_1_SYSEX, GetBankRGBColor(row, row.ActiveBank));
         SetButtonRGBColor(MKIII_SCENE_2_SYSEX, GetBankRGBColor(row, row.ActiveBank));
     }

@@ -210,6 +210,7 @@ public:
 
 
 	int syncState = 0;  // is our current model in sync with the device.  deprecated
+	int knob_resolution = 1000;
 
 	// following are not presently implemented.  The idea is to use the main displays to show things other than the knobs.  e.g., song list, pad assignments, etc
 	int ToggleDisplayLayout() { if (DisplayLayout == KNOB_LAYOUT) DisplayLayout = BOX_LAYOUT; else DisplayLayout = KNOB_LAYOUT; return DisplayLayout; }

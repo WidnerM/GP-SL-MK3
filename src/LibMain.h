@@ -417,11 +417,17 @@ public:
     // Called when rackspace changed
     void OnRackspaceActivated() override
     {
-        std::string widgetname;
+        std::string widgetname, caption;
         std::vector<std::string> widgetlist, globalwidgetlist;
         int row;
 
         // scriptLog("Rackspace Changed to " + std::to_string(getCurrentRackspaceIndex()) , 1);
+        if (widgetExists("mc_knobresolution"))
+        {
+            caption = getWidgetCaption("mc_knobresolution");
+            Surface.knob_resolution = (int)std::stoi("0" + caption);
+            if (Surface.knob_resolution < 1) Surface.knob_resolution = 1000;
+        }
 
         // Clear the BankIDs and active bank data from the prior rackspace's widget set
         for (row = 0; row < std::size(Surface.Row); row++)

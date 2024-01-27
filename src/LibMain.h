@@ -257,7 +257,7 @@ public:
             if ( widget.BankID == Surface.Row[widget.RowNumber].ActiveBankID() && Surface.Row[widget.RowNumber].Showing == 1)
             {
                 // for everything but Knobs we need to translate the new widget value to a color for the surface LED
-                if (Surface.Row[widget.RowNumber].Type == KNOB_TYPE)
+                if (Surface.Row[widget.RowNumber].Type == KNOB_TYPE && Surface.DisplayLayout == KNOB_LAYOUT)
                     DisplayWidgetValue(Surface.Row[widget.RowNumber], widget.Column, newValue);
                 else if (Surface.Row[widget.RowNumber].Type == FADER_TYPE)
                 {   

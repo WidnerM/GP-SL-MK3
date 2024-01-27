@@ -386,7 +386,7 @@ void LibMain::ProcessPad(uint8_t button, uint8_t value)
 void LibMain::ProcessKnob(uint8_t column, uint8_t value)  // processes a midi message for a knob turn (0-7) or the on/off of a knob 8
 {
     std::string widgetname, pwidgetname, caption;
-    int resolution = 1000;
+    int resolution = Surface.knob_resolution;
     double newValue = 0;
 
     if (Surface.Row[KNOB_ROW].BankValid())
@@ -397,11 +397,21 @@ void LibMain::ProcessKnob(uint8_t column, uint8_t value)  // processes a midi me
             if (column < 8)
             {
                 pwidgetname = KNOB_PREFIX + (std::string)"p_" + Surface.Row[KNOB_ROW].BankIDs[Surface.Row[KNOB_ROW].ActiveBank] + "_" + std::to_string(column);
-                if (widgetExists(pwidgetname))  // if there's a sl_kp_1_5 widget process second caption field as resolution (integer)
+                if (widgetExists(pwidgetname))  // if there's a sl_kp_bankname_5 widget process second caption field as resolution (integer)
                 {
                     caption = getWidgetCaption(pwidgetname);
                     std::vector< std::string> name_segments = ParseWidgetName(caption, '_');
                     (name_segments.size() >= 2) ? resolution = (int)std::stoi("0" + name_segments[1]) : resolution = 1000;  // default to 1000
+                }
+                else
+                {
+                    pwidgetname = KNOB_PREFIX + (std::string)"p_" + Surface.Row[KNOB_ROW].BankIDs[Surface.Row[KNOB_ROW].ActiveBank];
+                    if (widgetExists(pwidgetname))  // if there's a sl_kp_bankname widget process second caption field as resolution (integer)
+                    {
+                        caption = getWidgetCaption(pwidgetname);
+                        std::vector< std::string> name_segments = ParseWidgetName(caption, '_');
+                        (name_segments.size() >= 2) ? resolution = (int)std::stoi("0" + name_segments[1]) : resolution = 1000;  // default to 1000
+                    }
                 }
                 newValue = getWidgetValue(widgetname);
                 if (value < 4) {  // small numbers are turns in the clockwise direction

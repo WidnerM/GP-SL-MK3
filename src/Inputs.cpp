@@ -410,7 +410,7 @@ void LibMain::ProcessKnob(uint8_t column, uint8_t value)  // processes a midi me
                     {
                         caption = getWidgetCaption(pwidgetname);
                         std::vector< std::string> name_segments = ParseWidgetName(caption, '_');
-                        if (name_segments.size() >= 2) resolution = (int)std::stoi("0" + name_segments[1]);
+                        if (name_segments.size() >= 3) resolution = (int)std::stoi("0" + name_segments[2]);
                     }
                 }
                 if (resolution == 0) resolution = Surface.knob_resolution;

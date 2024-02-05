@@ -422,9 +422,9 @@ public:
         int row;
 
         // scriptLog("Rackspace Changed to " + std::to_string(getCurrentRackspaceIndex()) , 1);
-        if (widgetExists("mc_knobresolution"))
+        if (widgetExists("sl_knobresolution"))
         {
-            caption = getWidgetCaption("mc_knobresolution");
+            caption = getWidgetCaption("sl_knobresolution");
             Surface.knob_resolution = (int)std::stoi("0" + caption);
             if (Surface.knob_resolution < 1) Surface.knob_resolution = 1000;
         }

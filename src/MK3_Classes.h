@@ -71,7 +71,7 @@ public:
 	// uint8_t DimColor = SLMKIII_ORANGE_HALF, LitColor = SLMKIII_ORANGE, BarColor = SLMKIII_ORANGE, KnobColor = SLMKIII_ORANGE;
 	int RgbLitColor = 0, RgbDimColor = 0;
 
-	int resolution = 1000;
+	// int resolution = 1000;
 
 };
 

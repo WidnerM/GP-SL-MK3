@@ -401,7 +401,7 @@ void LibMain::ProcessKnob(uint8_t column, uint8_t value)  // processes a midi me
                 {
                     caption = getWidgetCaption(pwidgetname);
                     std::vector< std::string> name_segments = ParseWidgetName(caption, '_');
-                    (name_segments.size() >= 2) ? resolution = (int)std::stoi("0" + name_segments[1]) : resolution = 1000;  // default to 1000
+                    if (name_segments.size() >= 2) resolution = (int)std::stoi("0" + name_segments[1]);
                 }
                 else
                 {
@@ -410,9 +410,10 @@ void LibMain::ProcessKnob(uint8_t column, uint8_t value)  // processes a midi me
                     {
                         caption = getWidgetCaption(pwidgetname);
                         std::vector< std::string> name_segments = ParseWidgetName(caption, '_');
-                        (name_segments.size() >= 2) ? resolution = (int)std::stoi("0" + name_segments[1]) : resolution = 1000;  // default to 1000
+                        if (name_segments.size() >= 3) resolution = (int)std::stoi("0" + name_segments[2]);
                     }
                 }
+                if (resolution == 0) resolution = Surface.knob_resolution;
                 newValue = getWidgetValue(widgetname);
                 if (value < 4) {  // small numbers are turns in the clockwise direction
                     newValue = newValue + static_cast<double>(value) / static_cast<double>(resolution);

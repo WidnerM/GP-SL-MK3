@@ -257,7 +257,7 @@ public:
             if ( widget.BankID == Surface.Row[widget.RowNumber].ActiveBankID() && Surface.Row[widget.RowNumber].Showing == 1)
             {
                 // for everything but Knobs we need to translate the new widget value to a color for the surface LED
-                if (Surface.Row[widget.RowNumber].Type == KNOB_TYPE)
+                if (Surface.Row[widget.RowNumber].Type == KNOB_TYPE && Surface.DisplayLayout == KNOB_LAYOUT)
                     DisplayWidgetValue(Surface.Row[widget.RowNumber], widget.Column, newValue);
                 else if (Surface.Row[widget.RowNumber].Type == FADER_TYPE)
                 {   
@@ -422,9 +422,9 @@ public:
         int row;
 
         // scriptLog("Rackspace Changed to " + std::to_string(getCurrentRackspaceIndex()) , 1);
-        if (widgetExists("mc_knobresolution"))
+        if (widgetExists("sl_knobresolution"))
         {
-            caption = getWidgetCaption("mc_knobresolution");
+            caption = getWidgetCaption("sl_knobresolution");
             Surface.knob_resolution = (int)std::stoi("0" + caption);
             if (Surface.knob_resolution < 1) Surface.knob_resolution = 1000;
         }

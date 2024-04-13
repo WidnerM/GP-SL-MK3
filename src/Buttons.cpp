@@ -273,10 +273,21 @@ SurfaceWidget LibMain::PopulateWidget(std::string widgetname)
                         if (widgetExists(pwidgetname))
                         {
                             pcaption = getWidgetCaption(pwidgetname);
-                            if (! pcaption.empty() )
-                            { 
-                                size_t pos = pcaption.find("_");
-                                widget.Caption = pcaption.substr(0, pos);
+                            if (!pcaption.empty())
+                            {
+                                std::vector< std::string> name_segments = ParseWidgetName(pcaption, '_');
+                                (name_segments.size() >= 1) ? widget.Caption = name_segments[0] : widget.Caption = "";
+
+                                if ((widget.WidgetID == BUTTON_TAG || widget.WidgetID == PAD_TAG) && name_segments.size() >= 3)
+                                {
+                                    if (widget.Value > 0)
+                                        widget.TextValue = name_segments[2];
+                                    else
+                                        widget.TextValue = name_segments[1];
+                                }
+ 
+                                // size_t pos = pcaption.find("_");
+                                // widget.Caption = pcaption.substr(0, pos);
                             }
                             widget.RgbLitColor = getWidgetFillColor(pwidgetname);  // for knobs LitColor is the knob color, DimColor is top bar color
                             widget.RgbDimColor = getWidgetOutlineColor(pwidgetname);

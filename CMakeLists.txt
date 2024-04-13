@@ -17,7 +17,9 @@ FetchContent_Declare(
   # GIT_TAG f6b1ad94a3af83afd269a327e93ddc6cf94cb1b1
   # GIT_TAG 897b3452b99f2d7fc02502d0c90d89cd54b51c7e
   # GIT_TAG d264ab15312c2aac722feef523a1b3cbc809996b
-  GIT_TAG e457eea36042a9d3170f7f2e202f0535c7b3287a
+  # GIT_TAG e457eea36042a9d3170f7f2e202f0535c7b3287a
+  GIT_TAG 756ecd249f1ff00f3d3a5955769408f74c9fa453 # SDK 60
+
 )
 FetchContent_MakeAvailable(gp-sdk)
 

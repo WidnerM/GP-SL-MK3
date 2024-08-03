@@ -132,39 +132,39 @@ void LibMain::DisplayZones(SurfaceRow row)
 // these should only be called if we're changing one item and not touching the rest of the screen
 void LibMain::ShowTopLabelColor(uint8_t position, uint8_t color)
 {
-    uint8_t knobcolor[] = TOPBAR_SYSEX;
-    knobcolor[KNOB_Column] = position;
-    knobcolor[KNOB_Data] = color;
-    sendMidiMessage(knobcolor, sizeof(knobcolor));
+    uint8_t unitcolorsysex[] = TOPBAR_SYSEX;
+    unitcolorsysex[KNOB_Column] = position;
+    unitcolorsysex[KNOB_Data] = color;
+    sendMidiMessage(unitcolorsysex, sizeof(unitcolorsysex));
 }
 
 void LibMain::ShowBottomLabelColor(uint8_t position, uint8_t color)
 {
-    uint8_t knobcolor[] = BOTBAR_SYSEX;
-    knobcolor[KNOB_Column] = position;
-    knobcolor[KNOB_Data] = color;
-    sendMidiMessage(knobcolor, sizeof(knobcolor));
+    uint8_t unitcolorsysex[] = BOTBAR_SYSEX;
+    unitcolorsysex[KNOB_Column] = position;
+    unitcolorsysex[KNOB_Data] = color;
+    sendMidiMessage(unitcolorsysex, sizeof(unitcolorsysex));
 }
 
 
 void LibMain::DisplayHilight(uint8_t position, uint8_t row, uint8_t color)  // row is 0 top, 1 mid, 3 bot, color is 1 for highlight, 0 for not highlight
 {
-    uint8_t knobcolor[] = BOTBAR_HILIGHT_SYSEX;
-    knobcolor[KNOB_Column] = position;
-    knobcolor[10] = row;
-    knobcolor[KNOB_Data] = color;
-    sendMidiMessage(knobcolor, sizeof(knobcolor));
+    uint8_t unitcolorsysex[] = BOTBAR_HILIGHT_SYSEX;
+    unitcolorsysex[KNOB_Column] = position;
+    unitcolorsysex[10] = row;
+    unitcolorsysex[KNOB_Data] = color;
+    sendMidiMessage(unitcolorsysex, sizeof(unitcolorsysex));
 }
 
 void LibMain::DisplayBoxColor(uint8_t position, uint8_t row, int color)
 {
-    uint8_t knobcolor[] = BOXRGB_SYSEX;
-    knobcolor[8] = position;
-    knobcolor[10] = row;
-    knobcolor[11] = (uint8_t)(color >> 17 & 0x7f);
-    knobcolor[12] = (uint8_t)(color >> 9 & 0x7f);
-    knobcolor[13] = (uint8_t)(color >> 1 & 0x7f);
-    sendMidiMessage(knobcolor, sizeof(knobcolor));
+    uint8_t unitcolorsysex[] = BOXRGB_SYSEX;
+    unitcolorsysex[8] = position;
+    unitcolorsysex[10] = row;
+    unitcolorsysex[11] = (uint8_t)(color >> 17 & 0x7f);
+    unitcolorsysex[12] = (uint8_t)(color >> 9 & 0x7f);
+    unitcolorsysex[13] = (uint8_t)(color >> 1 & 0x7f);
+    sendMidiMessage(unitcolorsysex, sizeof(unitcolorsysex));
 }
 
 void LibMain::DisplayText(uint8_t column, uint8_t row, std::string text)  // top row = 0, bottom = 3 in Knob mode, 0 - 5 in Box mode

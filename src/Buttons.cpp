@@ -37,7 +37,7 @@ void LibMain::DisplayButtons(SurfaceRow row, uint8_t firstbutton, uint8_t number
                 LitColor = getWidgetFillColor(widgetname); // will use this for the right bar color
                 DimColor = getWidgetOutlineColor(widgetname);  
 
-                // check for parameters on "_i" widget for the group
+                // check for parameters on "_i" widget for the group - format this is "Top line_Bottom line" of the text
                 std::vector< std::string> name_segments = ParseWidgetName(Label, '_');
                 (name_segments.size() >= 1) ? Label = name_segments[0] : Label = "";
                 (name_segments.size() >= 2) ? Caption = name_segments[1] : Caption = "";
@@ -56,6 +56,7 @@ void LibMain::DisplayButtons(SurfaceRow row, uint8_t firstbutton, uint8_t number
 
         if (row.WidgetID == PAD_TAG)
         {
+            // if we're showing pads on the display, the row names on the right pane are on the _i widget as "Topline_Bottomline"
             widgetname = row.WidgetPrefix + "_" + row.BankIDs[row.ActiveBank] + "_i";
             if (widgetExists(widgetname))
             {
@@ -87,9 +88,9 @@ void LibMain::DisplayButtons(SurfaceRow row, uint8_t firstbutton, uint8_t number
 
                 if (row.Type == PAD_TYPE && Surface.DisplayLayout == BOX_LAYOUT)
                 {
-                    DisplayBoxColor(widget.Column < 8 ? widget.Column : widget.Column - 8, (uint8_t)widget.Column / 8, widget.RgbLitColor);
-                    if (widget.Column < 8) DisplayHilight(widget.Column, 0, widget.Value > 0.0 ? (uint8_t)1 : (uint8_t)0);
-                    else DisplayHilight(widget.Column - 8, 1, widget.Value > 0.0 ? (uint8_t)1 : (uint8_t)0);
+                    // DisplayBoxColor(widget.Column < 8 ? widget.Column : widget.Column - 8, (uint8_t)widget.Column / 8, widget.RgbLitColor);
+                    // if (widget.Column < 8) DisplayHilight(widget.Column, 0, widget.Value > 0.0 ? (uint8_t)1 : (uint8_t)0);
+                    // else DisplayHilight(widget.Column - 8, 1, widget.Value > 0.0 ? (uint8_t)1 : (uint8_t)0);
 
                     DisplayWidgetCaption(Surface.Row[widget.RowNumber], widget.Column, widget.TextValue, widget.Caption);
                 }

@@ -88,9 +88,9 @@ void LibMain::DisplayButtons(SurfaceRow row, uint8_t firstbutton, uint8_t number
 
                 if (row.Type == PAD_TYPE && Surface.DisplayLayout == BOX_LAYOUT)
                 {
-                    // DisplayBoxColor(widget.Column < 8 ? widget.Column : widget.Column - 8, (uint8_t)widget.Column / 8, widget.RgbLitColor);
-                    // if (widget.Column < 8) DisplayHilight(widget.Column, 0, widget.Value > 0.0 ? (uint8_t)1 : (uint8_t)0);
-                    // else DisplayHilight(widget.Column - 8, 1, widget.Value > 0.0 ? (uint8_t)1 : (uint8_t)0);
+                    DisplayBoxColor(widget.Column < 8 ? widget.Column : widget.Column - 8, (uint8_t)widget.Column / 8, widget.RgbLitColor);
+                    if (widget.Column < 8) DisplayHilight(widget.Column, 0, widget.Value > 0.0 ? (uint8_t)1 : (uint8_t)0);
+                    else DisplayHilight(widget.Column - 8, 1, widget.Value > 0.0 ? (uint8_t)1 : (uint8_t)0);
 
                     DisplayWidgetCaption(Surface.Row[widget.RowNumber], widget.Column, widget.TextValue, widget.Caption);
                 }

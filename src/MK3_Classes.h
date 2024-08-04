@@ -213,10 +213,11 @@ public:
 	int knob_resolution = 1000;
 
 	int ToggleDisplayLayout() { if (DisplayLayout == KNOB_LAYOUT) DisplayLayout = BOX_LAYOUT; else DisplayLayout = KNOB_LAYOUT; return DisplayLayout; }
-	// following are not presently implemented.  The idea is to use the main displays to show things other than the knobs.  e.g., song list, pad assignments, etc
+	// use the main displays to show things other than the knobs.  e.g., pad assignments, etc
 	void GotoSongMode() { BottomMode = SHOW_SONGS; }
 	void GotoKnobViewMode() { DisplayLayout = KNOB_LAYOUT; }
 	void GotoPadViewMode() { DisplayLayout = BOX_LAYOUT; }
+	// button view mode not currently implemented
 	void GotoButtonViewMode() { DisplayLayout = BOX_LAYOUT; }
 
 	// Initialize the surface class as required - specific to a particular control surface

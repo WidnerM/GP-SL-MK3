@@ -376,7 +376,7 @@ public:
                 // if it's a widget we're interested in, add a bank for it if it doesn't already exist, and listen for it
                 if (prefix.compare(THIS_PREFIX) == 0 && bank.compare("active") != 0)  // we don't listen for "active" bank widgets, which are generally just for linking to an OSC display
                 {
-                    if (Surface.addSurfaceBank(type, bank) == true) {   scriptLog("SL:  bS added bank for " + widgetname, 0); }
+                    if (Surface.addSurfaceBank(type, bank) == true) {   /*scriptLog("SL:  bS added bank for " + widgetname, 0);*/ }
                     // we don't listen for bank select widgets or anything else without an integer in the column field
                     if (column == std::to_string(std::stoi("0" + column)) ) { listenForWidget(widgetname, true); }
                 }

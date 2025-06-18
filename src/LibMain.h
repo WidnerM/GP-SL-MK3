@@ -140,6 +140,9 @@ public:
         std::string name;
         std::vector <std::string> validInPorts = {};
         std::vector <std::string> validOutPorts = {};
+        
+        if (widgetExists(MIDI_OUT_WIDGETNAME)) { MidiOut = ParseWidgetName(getWidgetCaption(MIDI_OUT_WIDGETNAME), ','); }
+        else MidiOut = { SL_MIDI_OUT };
 
         for (int i = 0; i < getMidiInDeviceCount(); i++)
         {
@@ -156,10 +159,12 @@ public:
             }
         }
 
+        // loop through all available midi out devices
         for (int i = 0; i < getMidiOutDeviceCount(); i++)
         {
             name = getMidiOutDeviceName(i);
             // scriptLog("Evaluating midi out " + name, 1);
+            // try matching to each MidiOut that we are checking for, e.g., normal windows name, normal mac name, any custom names
             for (int j = 0; j < MidiOut.size(); j++) {
                 if (name == MidiOut[j]) {
                     foundout = true;
@@ -168,6 +173,7 @@ public:
                 }
             }
         }
+        
         MidiOut = validOutPorts;
         // scriptLog(foundout ? EXTENSION_IDENTIFIER + (std::string)" using midi out " + MidiOut : EXTENSION_IDENTIFIER + (std::string)"COULD NOT FIND midi out " + MidiOut, 1);
         return (foundin && foundout);
@@ -217,7 +223,7 @@ public:
             }
 
             DisplayBottom(true);
-            Notify("This is", "Startup Text");
+            // Notify("This is", "Startup Text");
             OnRackspaceActivated();  // We call this to set everything up for the current Rackspace after initial Gig is loaded
         }
     }

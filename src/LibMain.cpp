@@ -69,8 +69,8 @@ void LibMain::InvokeMenu(int index)
         {
         case 0:
             SetMidiInOutDevices();
-            Surface.DisplayLayout = KNOB_LAYOUT;
-            InitializeMK3();
+            // Surface.DisplayLayout = KNOB_LAYOUT;
+            // InitializeMK3();
             OnStatusChanged(GPStatus_GigFinishedLoading);
             // OnRackspaceActivated();
             break;
@@ -96,22 +96,25 @@ void LibMain::InvokeMenu(int index)
 }
 
 void LibMain::sendMidiMessage(std::string MidiMessage) {
-    for (int i = 0; i < MidiOut.size(); i++) {
-        sendMidiMessageToMidiOutDevice(MidiOut[i], MidiMessage);
-    }
+    // for (int i = 0; i < MidiOut.size(); i++) {
+    //    sendMidiMessageToMidiOutDevice(MidiOut[i], MidiMessage);
+    // }
+    sendMidiMessageToMidiOutDevice(Surface.MidiOutPort, MidiMessage);
 }
 
 void LibMain::sendMidiMessage(gigperformer::sdk::GPMidiMessage MidiMessage)
 {
-    for (int i = 0; i < MidiOut.size(); i++) {
-        sendMidiMessageToMidiOutDevice(MidiOut[i], MidiMessage);
-    }
+    // for (int i = 0; i < MidiOut.size(); i++) {
+    //     sendMidiMessageToMidiOutDevice(MidiOut[i], MidiMessage);
+    // }
+    sendMidiMessageToMidiOutDevice(Surface.MidiOutPort, MidiMessage);
 }
 
 void LibMain::sendMidiMessage(const uint8_t* MidiMessage, int length) {
-    for (int i = 0; i < MidiOut.size(); i++) {
-        sendMidiMessageToMidiOutDevice(MidiOut[i], MidiMessage, length);
-    }
+    // for (int i = 0; i < MidiOut.size(); i++) {
+    //     sendMidiMessageToMidiOutDevice(MidiOut[i], MidiMessage, length);
+    // }
+    sendMidiMessageToMidiOutDevice(Surface.MidiOutPort, MidiMessage, length);
 }
 
 

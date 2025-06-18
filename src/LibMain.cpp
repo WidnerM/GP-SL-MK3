@@ -82,11 +82,13 @@ void LibMain::InvokeMenu(int index)
             scriptLog("Nothing here.", 0);
             break;
         case 2:
-            SetMidiInOutDevices();
+            // SetMidiInOutDevices();
             Surface.DisplayLayout = KNOB_LAYOUT;
-            Initialization();
+            // Initialization();
+            InitializeMK3();
             OnOpen();
             OnStatusChanged(GPStatus_GigFinishedLoading);
+
             break;
 
         default:

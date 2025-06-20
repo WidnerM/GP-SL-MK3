@@ -178,7 +178,7 @@ public:
         
         // MidiOut = validOutPorts;
         // scriptLog(foundout ? EXTENSION_IDENTIFIER + (std::string)" using midi out " + MidiOut : EXTENSION_IDENTIFIER + (std::string)"COULD NOT FIND midi out " + MidiOut, 1);
-        Surface.syncState = foundin && foundout;
+        if (foundin && foundout) Surface.syncState = 1; else Surface.syncState = 0; // set when both in and out are connected
         return (foundin && foundout);
     }
 
@@ -209,6 +209,7 @@ public:
             registerCallback("OnMidiIn");
 
             SetMidiInOutDevices();
+            InitializeMK3();
 
             Surface.BottomMode = inSetlistMode() ? SHOW_SONGS : SHOW_RACKSPACES;
             Surface.FirstShown[SHOW_SONGS] = 0;

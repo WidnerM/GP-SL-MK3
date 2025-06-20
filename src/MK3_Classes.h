@@ -214,7 +214,7 @@ public:
 
 	int syncState = 0;  // are we connected to the surface?
 	int knob_resolution = 1000;
-	int keylights[60] = { 0 }; // used to track the state of the key lights on the keyboard from the zones layout
+	unsigned int keylights[128] = { 0 }; // used to track the state of the key lights on the keyboard from the zones layout
 
 	int ToggleDisplayLayout() { if (DisplayLayout == KNOB_LAYOUT) DisplayLayout = BOX_LAYOUT; else DisplayLayout = KNOB_LAYOUT; return DisplayLayout; }
 	// use the main displays to show things other than the knobs.  e.g., pad assignments, etc
@@ -251,7 +251,7 @@ public:
 			Row[x].Showing = 1;
 		}
 
-		for (x = 0; x < 60; x++)
+		for (x = 0; x < 128; x++)
 		{
 			keylights[x] = 0; // initialize all key lights to off
 		}

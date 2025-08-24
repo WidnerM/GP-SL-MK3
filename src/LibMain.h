@@ -140,6 +140,9 @@ public:
         std::string name;
         std::vector <std::string> validInPorts = {};
         std::vector <std::string> validOutPorts = {};
+        
+        if (widgetExists(MIDI_OUT_WIDGETNAME)) { MidiOut = ParseWidgetName(getWidgetCaption(MIDI_OUT_WIDGETNAME), ','); }
+        else MidiOut = { SL_MIDI_OUT };
 
         for (int i = 0; i < getMidiInDeviceCount(); i++)
         {
@@ -149,6 +152,7 @@ public:
                     listenForMidi(getMidiInDeviceName(i), 1);
                     foundin = true;
                     validInPorts.push_back(name);
+                    Surface.MidiInPort = name;
                     scriptLog("SL:  Using midi in " + name, 0);
                 }
                 else if (name == SL_MIDI_KEYLIGHTS) { listenForMidi(getMidiInDeviceName(i), 1); scriptLog("SL:  Using SL Keylights", 0);
@@ -156,20 +160,25 @@ public:
             }
         }
 
+        // loop through all available midi out devices
         for (int i = 0; i < getMidiOutDeviceCount(); i++)
         {
             name = getMidiOutDeviceName(i);
             // scriptLog("Evaluating midi out " + name, 1);
+            // try matching to each MidiOut that we are checking for, e.g., normal windows name, normal mac name, any custom names
             for (int j = 0; j < MidiOut.size(); j++) {
                 if (name == MidiOut[j]) {
                     foundout = true;
                     validOutPorts.push_back(name);
+                    Surface.MidiOutPort = name;
                     scriptLog("SL:  Using midi out " + name, 0);
                 }
             }
         }
-        MidiOut = validOutPorts;
+        
+        // MidiOut = validOutPorts;
         // scriptLog(foundout ? EXTENSION_IDENTIFIER + (std::string)" using midi out " + MidiOut : EXTENSION_IDENTIFIER + (std::string)"COULD NOT FIND midi out " + MidiOut, 1);
+        if (foundin && foundout) Surface.syncState = 1; else Surface.syncState = 0; // set when both in and out are connected
         return (foundin && foundout);
     }
 
@@ -200,6 +209,7 @@ public:
             registerCallback("OnMidiIn");
 
             SetMidiInOutDevices();
+            InitializeMK3();
 
             Surface.BottomMode = inSetlistMode() ? SHOW_SONGS : SHOW_RACKSPACES;
             Surface.FirstShown[SHOW_SONGS] = 0;
@@ -217,7 +227,7 @@ public:
             }
 
             DisplayBottom(true);
-            Notify("This is", "Startup Text");
+            // Notify("This is", "Startup Text");
             OnRackspaceActivated();  // We call this to set everything up for the current Rackspace after initial Gig is loaded
         }
     }
@@ -523,7 +533,26 @@ public:
     // A midi device was added or removed
     void OnMidiDeviceListChanged(std::vector< std::string>& inputs, std::vector< std::string>& outputs) override
     {
-        SetMidiInOutDevices();
+        bool disconnected = Surface.syncState == 0;  // we were not connected heading into this callback
+
+        if (SetMidiInOutDevices() && disconnected)  // if we got connected, initialize the MK3
+        {
+            InitializeMK3();
+
+            if (inSetlistMode())  // we have the "Clear" button on the MK3 toggling in and out of Setlist mode.  Orange is in Setlist mode, Purple if not.
+            {
+                SetButtonColor(MKIII_CLEAR, Surface.BottomColor[SHOW_RACKSPACES]);
+            }
+            else
+            {
+                SetButtonColor(MKIII_CLEAR, Surface.BottomColor[SHOW_SONGS]);
+            }
+
+            DisplayBottom(true);
+
+            OnRackspaceActivated();  // We call this to set everything up for the current Rackspace
+        }
+
     }
 
 
@@ -532,6 +561,8 @@ public:
     {
         // scriptLog("OnOpen called.", 1);
         Surface.Initialize();
+        SetMidiInOutDevices();
+
         sendMidiMessage(gigperformer::sdk::GPMidiMessage::makeSysexMessage(
             gigperformer::sdk::GPUtils::hex2binaryString(SLMK3_EMPTY_LAYOUT)));
         sendMidiMessage(gigperformer::sdk::GPMidiMessage::makeSysexMessage(
@@ -587,8 +618,8 @@ public:
        {
             // Do any initialization that you need
             // scriptLog("Path to me = " + getPathToMe(), 1);
-            Surface.syncState = 1;
-            InitializeMK3();
+            // Surface.syncState = 1;
+            // InitializeMK3();
               
             // Finally, register all the methods that you are going to actually use, i.e, the ones you declared above as override
             registerCallback("OnOpen");

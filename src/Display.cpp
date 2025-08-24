@@ -12,14 +12,9 @@ void LibMain::InitializeMK3()
     std::string hexmessage = UNIVERSAL_QUERY;
     std::string binmessage;
 
-    if (Surface.syncState == 1)
-    {
-        // hexmessage = SLMK3_KNOB_LAYOUT;
-        sendMidiMessage(gigperformer::sdk::GPMidiMessage(SLMK3_KNOB_LAYOUT));
-        sendMidiMessage(
-            gigperformer::sdk::GPMidiMessage(SLMK3_SYS_HEADER + (std::string) "05 01 F7")); // Tell SLMK3 to allow setting of LEDs
-
-    }
+    // hexmessage = SLMK3_KNOB_LAYOUT;
+    sendMidiMessage(gigperformer::sdk::GPMidiMessage(SLMK3_KNOB_LAYOUT));
+    sendMidiMessage(gigperformer::sdk::GPMidiMessage(SLMK3_ENABLE_LEDS));
 }
 
 uint8_t LibMain::SetDisplayLayout()
@@ -63,19 +58,20 @@ void LibMain::Notify(std::string text, std::string line2)
 // lights keylights on SL MKIII
 void LibMain::Keylights(const uint8_t* data, int length)
 {
-    if (data[1] >= 0x18 && data[1] <= 0x54) { // 0x44 to 0x80 for sysex or 00 to 3c  | key range is 0x18 - 0x54 but 0x54 is actually pad up arrow
+    if (data[1] >= 36 && data[1] < 96) { // 0x44 to 0x80 for sysex or 00 to 3c  | key range is 0x18 - 0x54 but 0x54 is actually pad up arrow
         // if (data[0] == 0x90) sendMidiMessage(GPMidiMessage::makeNoteOnMessage(data[1], data[2], 16));
         // if (data[0] == 0x80) sendMidiMessage(GPMidiMessage::makeNoteOffMessage(data[1], data[2], 16));
         uint8_t red = data[2];
         uint8_t blue = 0x7f - data[2];
-        if (data[0] == 0x90) SetButtonRGBColor(data[1] + 0x2c, ( blue < 90 ? 0x010000 * red : 0x00) + (red > 90 ? 0x00 : blue ));
-        if (data[0] == 0x80) SetButtonRGBColor(data[1] + 0x2c, 0x000000);
+        if (data[0] == 0x90) SetButtonRGBColor(data[1] + 32, ( blue < 90 ? 0x010000 * red : 0x00) + (red > 90 ? 0x00 : blue ));
+        if (data[0] == 0x80) SetButtonRGBColor(data[1] + 32, Surface.keylights[data[1]]); // revert to zone defined key color
     }
 }
 
 // lights keylights on SL MKIII
 bool LibMain::LightKey(uint8_t note, int color)
 {
+    Surface.keylights[note] = color; // store the color for this keylight in the keylights array (which is for all 127 midi notes)
     if (note >= 36 && note <= 96) { // 0x44 to 0x7f for sysex, 68-127 decimaal | runs out of space for last key
         SetButtonRGBColor(note + 32, color);
         return true;

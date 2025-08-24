@@ -200,6 +200,9 @@ public:
 	SurfaceRow Row[5];
 	uint8_t NumRows = 5;
 
+	std::string MidiInPort = "";
+	std::string MidiOutPort = "";
+
 	uint8_t DisplayLayout = KNOB_LAYOUT;   // Is display showing Knob Layout or Box Layout (which shows three groups of two lines per display) 
 	uint8_t BottomMode = SHOW_RACKSPACES;  // What to show along bottom of display when in Knob View mode
 	uint8_t SideMode = SHOW_BUTTONS;
@@ -209,8 +212,9 @@ public:
 	uint8_t BottomHalfColor[BOTTOM_MODES] = { SLMKIII_ORANGE_HALF, SLMKIII_BLUE_HALF, SLMKIII_PURPLE_HALF, SLMKIII_MINT_HALF, SLMKIII_GREEN_HALF };
 
 
-	int syncState = 0;  // is our current model in sync with the device.  deprecated
+	int syncState = 0;  // are we connected to the surface?
 	int knob_resolution = 1000;
+	unsigned int keylights[128] = { 0 }; // used to track the state of the key lights on the keyboard from the zones layout
 
 	int ToggleDisplayLayout() { if (DisplayLayout == KNOB_LAYOUT) DisplayLayout = BOX_LAYOUT; else DisplayLayout = KNOB_LAYOUT; return DisplayLayout; }
 	// use the main displays to show things other than the knobs.  e.g., pad assignments, etc
@@ -245,6 +249,11 @@ public:
 			Row[x].FirstIDsysex = first_sysex[x];
 			Row[x].MidiCommand = midi_commands[x];
 			Row[x].Showing = 1;
+		}
+
+		for (x = 0; x < 128; x++)
+		{
+			keylights[x] = 0; // initialize all key lights to off
 		}
 
 		return true;

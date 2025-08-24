@@ -351,11 +351,12 @@ void LibMain::ToggleButton(uint8_t button)
 void LibMain::ProcessPad(uint8_t button, uint8_t value)
 {
     int x, row, invert = 0;
-    std::string widgetname, caption, Extras;
+    std::string widgetname, pwidgetname, caption, Extras;
     double currentValue = 0;
+	bool momentary = false;
 
 
-    if (button >= MKIII_PAD_BASE && button <= MKIII_PAD16 && value > 0 ) 
+    if (button >= MKIII_PAD_BASE && button <= MKIII_PAD16 ) 
     {
         x = button - MKIII_PAD_BASE;
         if (x > 7) { x -= 8; } // pad numbers are not contiguous.  There are 8 unused between the top and bottom row.
@@ -365,19 +366,34 @@ void LibMain::ProcessPad(uint8_t button, uint8_t value)
         {
             widgetname = Surface.Row[row].WidgetPrefix + (std::string)"_" + Surface.Row[row].BankIDs[Surface.Row[row].ActiveBank] + "_" + std::to_string(x);
             currentValue = getWidgetValue(widgetname);
-            /*  if (widgetExists(widgetname + "_p"))
+
+            // check for "_m" indicator in p-widget caption for momentary
+            pwidgetname = Surface.Row[row].WidgetPrefix + (std::string)"p_" + Surface.Row[row].BankIDs[Surface.Row[row].ActiveBank] + "_" + std::to_string(x);
+            if (widgetExists(pwidgetname))  // if there's a sl_pp_bankname_5 widget look for fourth field to indicate momentary
             {
-                Extras = getWidgetCaption(widgetname + "_p");
-                std::vector< std::string>& name_segments = ParseWidgetName(Extras, '_');
-            } */
+                caption = getWidgetCaption(pwidgetname);
+                std::vector< std::string> name_segments = ParseWidgetName(caption, '_');
+                if (name_segments.size() >= 3) momentary = name_segments[3]=="m";
+            }
 
             // scriptLog("Toggling: " + widgetname + ", was " + std::to_string(newValue), 1);
-            if (currentValue != 0.0) {
-                setWidgetValue(widgetname, (double)0.0);
-            }
-            else
+            // if it's set for momentary we set to 1 if > 0; if not momentary then we toggle on non-zero values
+            if (momentary)
             {
-                setWidgetValue(widgetname, (double)1.0);
+				setWidgetValue(widgetname, (value != 0) ? (double)1.0 : (double)0.0);
+            }
+            else // toggle on non-zero values
+            {
+                if (value > 0)
+                {
+                    if (currentValue != 0.0) {
+                        setWidgetValue(widgetname, (double)0.0);
+                    }
+                    else
+                    {
+                        setWidgetValue(widgetname, (double)1.0);
+                    }
+                }
             }
         }
     }

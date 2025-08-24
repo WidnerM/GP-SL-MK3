@@ -298,7 +298,7 @@ public:
                 ProcessButton(data[1], data[2]);  // it's a button press
             }
             else if (IsPad(data, length)) {
-                if (data[0] == 0x9f) // every pad press sends a note on with velocity followed by a note off on release.  We ignore the note off events.
+                // if (data[0] == 0x9f || data) // every pad press sends a note on with velocity followed by a note off on release.  We ignore the note off events.
                 {
                     ProcessPad(data[1], data[2]);
                 }

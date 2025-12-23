@@ -43,8 +43,8 @@ void LibMain::ProcessButton(uint8_t button, uint8_t value)  // processes a midi 
     int x;
     std::string widgetname;
 
-    if (value == 127) {  // only process button downs
-        
+    if (value == 127) {  // only process button downs for most buttons
+
         if (button == MKIII_CLEAR) // use this to toggle in and out of Setlist Mode
         {
             inSetlistMode() ? switchToPanelView() : switchToSetlistView();
@@ -67,7 +67,7 @@ void LibMain::ProcessButton(uint8_t button, uint8_t value)  // processes a midi 
         }
 
         // use this to toggle between seeing racks/variation or songs/songparts depending on mode
-        else if (button == MKIII_GRID) 
+        else if (button == MKIII_GRID)
         {
             if (inSetlistMode())
             {
@@ -81,7 +81,7 @@ void LibMain::ProcessButton(uint8_t button, uint8_t value)  // processes a midi 
         }
 
         // It's the transport play button
-        else if (button == MKIII_TRANSPORT_PLAY) 
+        else if (button == MKIII_TRANSPORT_PLAY)
         {
             // widgetname = THIS_PREFIX + (std::string) "_" + "t" + "_p";  // The transport Play button will toggle global playhead if attached to a "sl_t_p" button widget
             // if (widgetExists(widgetname)) { setWidgetValue(widgetname, (getWidgetValue(widgetname) ? 0.0 : 1.0 ) ); }  // no need to light it because the Playstate callback will do that
@@ -93,7 +93,7 @@ void LibMain::ProcessButton(uint8_t button, uint8_t value)  // processes a midi 
         }
 
         // the display DOWN button shifts to the next HIGHER knob bank
-        else if (button == MKIII_DISPLAY_DOWN)  
+        else if (button == MKIII_DISPLAY_DOWN)
         {
             // RowNextBank(Surface.Row[KNOB_ROW]);
             // DisplayRow(Surface.Row[KNOB_ROW]);
@@ -104,7 +104,7 @@ void LibMain::ProcessButton(uint8_t button, uint8_t value)  // processes a midi 
         }
 
         // UP button goes to next LOWER knob bank
-        else if (button == MKIII_DISPLAY_UP)  
+        else if (button == MKIII_DISPLAY_UP)
         {
             // RowPreviousBank(Surface.Row[KNOB_ROW]);
             // DisplayRow(Surface.Row[KNOB_ROW]);
@@ -242,7 +242,7 @@ void LibMain::ProcessButton(uint8_t button, uint8_t value)  // processes a midi 
                 }
             }
         }
-        
+
         else if (button == SONGLIST_DOWN)
         {
             if (Surface.BottomMode == SHOW_SONGS)
@@ -298,13 +298,15 @@ void LibMain::ProcessButton(uint8_t button, uint8_t value)  // processes a midi 
                 }
             }
         }
-
-
-        else if ((button >= MKIII_BUTTON_ROW1_1) && (button <= MKIII_BUTTON_ROW2_8))
-        {
-            ToggleButton(button);
-        }
     }
+
+
+    else if ((button >= MKIII_BUTTON_ROW1_1) && (button <= MKIII_BUTTON_ROW2_8))
+    {
+        // ToggleButton(button);
+        ProcessPad(button, value);
+    }
+
 }
 
 
@@ -350,18 +352,27 @@ void LibMain::ToggleButton(uint8_t button)
 // we just toggle the widgets here and let the OnWidgetValueChanged() callback push the change to the control surface
 void LibMain::ProcessPad(uint8_t button, uint8_t value)
 {
-    int x, row, invert = 0;
+    int x, row = -1, invert = 0;
     std::string widgetname, pwidgetname, caption, Extras;
     double currentValue = 0;
 	bool momentary = false;
 
 
-    if (button >= MKIII_PAD_BASE && button <= MKIII_PAD16 ) 
+    if (button >= MKIII_PAD_BASE && button <= MKIII_PAD16)
     {
         x = button - MKIII_PAD_BASE;
         if (x > 7) { x -= 8; } // pad numbers are not contiguous.  There are 8 unused between the top and bottom row.
         row = PAD_ROW;
 
+    }
+    else if (button >= MKIII_BUTTON_ROW1_1 && button <= MKIII_BUTTON_ROW2_8)
+    {
+        row = BUTTON_ROW;
+        x = button - MKIII_BUTTON_ROW1_1;
+    }
+
+    if (row >= 0)
+	{
         if (Surface.Row[row].BankValid())
         {
             widgetname = Surface.Row[row].WidgetPrefix + (std::string)"_" + Surface.Row[row].BankIDs[Surface.Row[row].ActiveBank] + "_" + std::to_string(x);

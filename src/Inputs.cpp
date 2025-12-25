@@ -301,7 +301,7 @@ void LibMain::ProcessButton(uint8_t button, uint8_t value)  // processes a midi 
     }
 
 
-    else if ((button >= MKIII_BUTTON_ROW1_1) && (button <= MKIII_BUTTON_ROW2_8))
+    if ((button >= MKIII_BUTTON_ROW1_1) && (button <= MKIII_BUTTON_ROW2_8))
     {
         // ToggleButton(button);
         ProcessPad(button, value);
@@ -384,10 +384,10 @@ void LibMain::ProcessPad(uint8_t button, uint8_t value)
             {
                 caption = getWidgetCaption(pwidgetname);
                 std::vector< std::string> name_segments = ParseWidgetName(caption, '_');
-                if (name_segments.size() >= 3) momentary = name_segments[3]=="m";
+                if (name_segments.size() >= 3) momentary = name_segments[2]=="m";
             }
 
-            // scriptLog("Toggling: " + widgetname + ", was " + std::to_string(newValue), 1);
+            // scriptLog("Toggling: " + widgetname + ", to " + std::to_string(value), 1);
             // if it's set for momentary we set to 1 if > 0; if not momentary then we toggle on non-zero values
             if (momentary)
             {

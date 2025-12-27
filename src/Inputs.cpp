@@ -384,7 +384,7 @@ void LibMain::ProcessPad(uint8_t button, uint8_t value)
             {
                 caption = getWidgetCaption(pwidgetname);
                 std::vector< std::string> name_segments = ParseWidgetName(caption, '_');
-                if (name_segments.size() >= 3) momentary = name_segments[2]=="m";
+                if (name_segments.size() > 3) momentary = name_segments[3]=="m";
             }
 
             // scriptLog("Toggling: " + widgetname + ", to " + std::to_string(value), 1);

@@ -149,7 +149,7 @@ void LibMain::ProcessButton(uint8_t button, uint8_t value)  // processes a midi 
             DisplayRow(Surface.Row[FADER_ROW]);
         }
 
-        // UP button goes to next LOWER knob bank
+        // next fade bank
         else if (button == MKIII_SCENE_1)
         {
             RowPreviousBank(Surface.Row[FADER_ROW]);

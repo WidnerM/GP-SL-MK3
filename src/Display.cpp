@@ -72,7 +72,7 @@ void LibMain::Keylights(const uint8_t* data, int length)
 bool LibMain::LightKey(uint8_t note, int color)
 {
     Surface.keylights[note] = color; // store the color for this keylight in the keylights array (which is for all 127 midi notes)
-    if (note >= 36 && note <= 96) { // 0x44 to 0x7f for sysex, 68-127 decimaal | runs out of space for last key
+    if (note >= 36 && note < 96) { // 0x44 to 0x7f for sysex, 68-127 decimaal | runs out of space for last key
         SetButtonRGBColor(note + 32, color);
         return true;
     }
@@ -209,9 +209,9 @@ void LibMain::SetButtonColor(uint8_t button, uint8_t color)  // make and send mi
 
 void LibMain::SetButtonRGBColor(uint8_t button, int value) // int parameter will display RGB color using sysex
 {
-    sendMidiMessage(gigperformer::sdk::GPMidiMessage(SLMK3_SYS_HEADER + (std::string) " 03 " +
-                                                     gigperformer::sdk::GPUtils::intToHex(button) + " 01 " +
-                                                     GPColorToSLColorHex(value) + " f7"));
+    sendMidiMessage(gigperformer::sdk::GPMidiMessage(SLMK3_SYS_HEADER + (std::string) "03" +
+                                                     gigperformer::sdk::GPUtils::intToHex(button) + "01" +
+                                                     GPColorToSLColorHex(value) + "f7"));
 }
 
 // Show value of a widget on its linked control surface item
@@ -269,7 +269,7 @@ void LibMain::DisplayWidgetCaption(const SurfaceRow& Row, uint8_t column, std::s
 
 void LibMain::DisplayRow(SurfaceRow row)
 {
-    ResetBankIndicators(row);
+    ResetBankIndicators(row);  // sets and _i widgets for the proper bank selected
     if (row.Type == KNOB_TYPE)
     {
         DisplayKnobs(row);

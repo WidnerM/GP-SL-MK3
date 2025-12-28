@@ -30,6 +30,7 @@ void LibMain::DisplayButtons(SurfaceRow row, uint8_t firstbutton, uint8_t number
         // Color the right side bars and populate right side text if it's a Button bank
         if (row.WidgetID == BUTTON_TAG )
         {
+
             widgetname = row.WidgetPrefix + "_" + row.BankIDs[row.ActiveBank] + "_i";
             if (widgetExists(widgetname))
             {

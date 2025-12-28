@@ -122,7 +122,6 @@ public:
     void DisplayKnobs(SurfaceRow row);  // Shows the active knob bank (as stored in Surface.Row[].ActiveBank)
     void ResetBankIndicators(SurfaceRow row);
     void ClearKnobArea();
-    uint8_t GetBankColor(SurfaceRow row, int bankindex);
     int GetBankRGBColor(SurfaceRow row, int bankindex);
 
     // from Buttons.cpp
@@ -232,8 +231,7 @@ public:
         }
     }
 
-
-        
+   
     void OnGlobalPlayStateChanged(double playing) override
     {
         // Light the Play transport button according to play state.

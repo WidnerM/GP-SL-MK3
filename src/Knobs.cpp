@@ -136,28 +136,6 @@ void LibMain::ClearKnobArea()
     sendMidiMessage(binmessage);
 }
 
-// returns the color of the indicated bankindex of Surface.Row by checking for presense of a "p" widget, expecting color as first field of caption
-// generally used for coloring the up/down bank arrows for knobs, button, and pad rows
-// deprecated since we GetWidgetFillColor() and GetWidgetBorderColor() were added.  We use text widgets for bank colors now, on _i widgets
-uint8_t LibMain::GetBankColor(SurfaceRow row, int bankindex)
-{
-    uint8_t color = SLMKIII_BLACK;
-    std::string widgetname;
-
-    if (row.BankValid() && bankindex >= 0 && bankindex != row.ActiveBank)
-    {
-        widgetname = row.WidgetPrefix + (std::string)"_" + row.BankIDs[bankindex] + "_p";
-        if (widgetExists(widgetname)) {
-            std::vector< std::string> name_segments = ParseWidgetName(getWidgetCaption(widgetname), '_');
-            if (name_segments.size() >= 1) {
-                color = (uint8_t)std::stoi("0" + name_segments[0]);
-            }
-        }
-        else { color = SLMKIII_ORANGE_HALF; }  // bank exists, but doesn't have a defined color
-    }
-    return color;
-}
-
 // returns the color of the indicated bankindex of Surface.Row by checking for presense of a
 // bank parameter widget, or "_i" widget, with GetWidgetFillColor() for the indicator color.
 // generally used for coloring the up/down bank arrows for knobs, button, and pad rows

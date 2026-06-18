@@ -16,15 +16,21 @@
 
 #include "MK3_Classes.h"
 #include "General_Utils.h"
+#include "DelayCallback.h"
 
+#include "Version.h"
 
 // define an XML string describing your product
-const std::string XMLProductDescription =   
-     // Replace with your information            
-    "<Library>" 
-    "<Product Name=\"SL MKIII Extension\" Version=\"1.0.5\" BuildDate=\"12/27/2025\"></Product> "
-    "<Description>Control Integration for Novation SL MK III</Description>"
-    "</Library>"; 
+const std::string XMLProductDescription = "<Library>"
+"<Product Name=\"" +
+PROJECT_TITLE + "\" Version=\"" + PROJECT_VERSION + "\" BuildDate=\"" +
+PROJECT_BUILD_DATE +
+"\"></Product>"
+"<Description>" +
+PROJECT_DESCRIPTION +
+"</Description>"
+"<ImagePath></ImagePath>"
+"</Library>";
 
 
 // Define your class here - it MUST be called LibMain and it must inherit from GigPerformerAPI
@@ -49,13 +55,14 @@ public:
     //  Global declarations and initializations
     //  [Global to the LibMain class, that is]
     SurfaceClass Surface;
+    RefreshTimer refreshTimer;
 
     std::vector<std::string> MidiOut = { SL_MIDI_OUT };
     std::vector<std::string> MidiIn = { SL_MIDI_IN };
     std::vector<std::string> MidiKeylightsIn = { SL_MIDI_IN };
 
     // Generic support function definitions and includes
-
+    // void lambdaDemo(std::string message);
 
     // Core SL MK3 Routine declarations (as part of LibMain class)
 
@@ -67,7 +74,7 @@ public:
     // from Display.cpp - functions for displaying things on the main displays
     void InitializeMK3();
     uint8_t SetDisplayLayout(); // sets the SL MK3 display to appropriate mode based on Surface.DisplayLayout
-    void Notify(std::string text, std::string line2);
+    void Notify(std::string text, std::string line2, std::string portname = "");
     void DisplayText(uint8_t column, uint8_t row, std::string text);
     void Keylights(const uint8_t* data, int length);
     bool LightKey(uint8_t note, int color);
@@ -170,6 +177,7 @@ public:
                     foundout = true;
                     validOutPorts.push_back(name);
                     Surface.MidiOutPort = name;
+					refreshTimer.midiport = name;
                     scriptLog("SL:  Using midi out " + name, 0);
                 }
             }
@@ -177,7 +185,7 @@ public:
         
         // MidiOut = validOutPorts;
         // scriptLog(foundout ? EXTENSION_IDENTIFIER + (std::string)" using midi out " + MidiOut : EXTENSION_IDENTIFIER + (std::string)"COULD NOT FIND midi out " + MidiOut, 1);
-        if (foundin && foundout) Surface.syncState = 1; else Surface.syncState = 0; // set when both in and out are connected
+        if (foundin && foundout) refreshTimer.syncState = Surface.syncState = 1; else refreshTimer.syncState = Surface.syncState = 0; // set when both in and out are connected
         return (foundin && foundout);
     }
 
@@ -228,6 +236,10 @@ public:
             DisplayBottom(true);
             // Notify("This is", "Startup Text");
             OnRackspaceActivated();  // We call this to set everything up for the current Rackspace after initial Gig is loaded
+
+            // Start the juice library and the refresh timer
+            juce::MessageManager::getInstance()->callAsync([]() { });  // this starts the juce library
+            refreshTimer.startTimer(1500);
         }
     }
 
@@ -339,6 +351,9 @@ public:
     {
         // scriptLog("Song changed to number " + std::to_string(newIndex), 1);
         Surface.BottomMode = SHOW_SONGPARTS;
+        refreshTimer.line1 = getSongName(getCurrentSongIndex());
+        refreshTimer.line2 = getSongpartName(getCurrentSongIndex(), getCurrentSongpartIndex());
+        DisplayBottom(true);
     } 
 
     // Called when entering song mode
@@ -350,6 +365,8 @@ public:
             SetButtonColor(MKIII_CLEAR, Surface.BottomColor[SHOW_RACKSPACES]);
             Surface.BottomMode = SHOW_SONGS;
             DisplayBottom(true);
+            refreshTimer.line1 = getSongName(getCurrentSongIndex());
+            refreshTimer.line2 = getSongpartName(getCurrentSongIndex(), getCurrentSongpartIndex());
         }
         else
         {
@@ -357,6 +374,8 @@ public:
             SetButtonColor(MKIII_CLEAR, Surface.BottomColor[SHOW_SONGS]);
             Surface.BottomMode = SHOW_RACKSPACES;
             DisplayBottom(true);
+            refreshTimer.line1 = getRackspaceName(getCurrentRackspaceIndex());
+            refreshTimer.line2 = getVariationName(getCurrentRackspaceIndex(), getCurrentVariationIndex());
         }
     }
 
@@ -487,6 +506,8 @@ public:
             else {
                 Surface.BottomMode = SHOW_RACKSPACES;
             }
+            refreshTimer.line1 = getRackspaceName(getCurrentRackspaceIndex());
+            refreshTimer.line2 = getVariationName(getCurrentRackspaceIndex(), getCurrentVariationIndex());
         }
         DisplayBottom(true);
     } 
@@ -513,18 +534,23 @@ public:
 
         setActiveBank(Surface.Row[FADER_ROW]);
         DisplayRow(Surface.Row[FADER_ROW]);
+
+        if (! inSetlistMode())
+        {
+            refreshTimer.line2 = getVariationName(getCurrentRackspaceIndex(), newIndex);
+		}
         // Surface.Row[FADER_ROW].Showing = 0;  // this is to NOT show fader moves in the display notification area
         // ClearDisplayRow(Surface.Row[FADER_ROW]); // we clear the fader LEDs to indicate the widgets aren't aligned to the faders
 
         // read variation name and post it in a Notify to the SL MKIII
         // Notify("Variation: " + newIndex);
-
     }
 
     void OnSongPartChanged(int oldIndex, int newIndex) override
     {
         // scriptLog("Songpart Changed", 1);
         if (Surface.BottomMode == SHOW_SONGPARTS) { DisplayBottom(true); }
+        refreshTimer.line2 = getSongpartName(getCurrentSongIndex(), getCurrentSongpartIndex());
     }
 
 
@@ -581,6 +607,10 @@ public:
     {
         std::string hexstring, binstring;
         uint8_t x;
+
+		// kill the juice message manager to stop any pending async calls
+		refreshTimer.stopTimer();
+        juce::MessageManager::deleteInstance();
 
         // Write message to screen and clear all buttons
         sendMidiMessage(gigperformer::sdk::GPMidiMessage::makeSysexMessage(

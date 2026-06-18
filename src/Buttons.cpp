@@ -66,7 +66,7 @@ void LibMain::DisplayButtons(SurfaceRow row, uint8_t firstbutton, uint8_t number
                 (name_segments.size() >= 1) ? Label = name_segments[0] : Label = "";
                 (name_segments.size() >= 2) ? Caption = name_segments[1] : Caption = "";
             }
-            Notify(Label, Caption);
+            // Notify(Label, Caption);
         }
         
         for (x = firstbutton ; x < firstbutton + number; x++)

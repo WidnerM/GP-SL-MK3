@@ -39,7 +39,7 @@ std::string LibMain::GPColorToSLColorHex(int color)
 
 
 // displays in notification area in 5th lcd window
-void LibMain::Notify(std::string text, std::string line2)  
+void LibMain::Notify(std::string text, std::string line2, std::string portname)
 {
     std::string hexmessage, subtext, binmessage;
 
@@ -51,8 +51,13 @@ void LibMain::Notify(std::string text, std::string line2)
     subtext = cleanSysex(line2);
     subtext = subtext.substr(0, 18);
     hexmessage = hexmessage + textToHexString(line2) + " 00 f7";
+	// scriptLog("Notify: " + text + " | " + line2 + " | " + portname, 0);
     // binmessage = GPUtils::hex2binaryString(hexmessage);
-    sendMidiMessage(gigperformer::sdk::GPMidiMessage(hexmessage));
+    // sendMidiMessage(gigperformer::sdk::GPMidiMessage(hexmessage));
+	if (portname == "")
+        sendMidiMessageToMidiOutDevice(Surface.MidiOutPort, gigperformer::sdk::GPMidiMessage(hexmessage));
+    else
+		sendMidiMessageToMidiOutDevice(portname, gigperformer::sdk::GPMidiMessage(hexmessage));
 }
 
 // lights keylights on SL MKIII
@@ -245,7 +250,7 @@ void LibMain::DisplayWidgetCaption(const SurfaceRow& Row, uint8_t column, std::s
         DisplayText(column, 1, line1);
         // DisplayText(column, 0, line2);
     }
-    else if (Row.Type == BUTTON_TYPE) Notify(line1, line2);
+    // else if (Row.Type == BUTTON_TYPE) Notify(line1, line2);
     else if (Row.Type == PAD_TYPE)
     {
         if (Surface.DisplayLayout == BOX_LAYOUT)
@@ -261,7 +266,7 @@ void LibMain::DisplayWidgetCaption(const SurfaceRow& Row, uint8_t column, std::s
                 DisplayText(column - 8, 3, line1);
             }
         }
-        else Notify(line1, line2);
+        // else Notify(line1, line2);
     }
 
 }

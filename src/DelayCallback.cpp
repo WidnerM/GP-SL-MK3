@@ -6,31 +6,26 @@
 #include "DelayCallback.h"
 #include "LibMain.h"
 
-LibMain* lib = new LibMain(nullptr); // mrw - this is needed as a reference to LibMain
+// This is a static pointer to the LibMain instance, which is used in the timer callback to access the library's methods and properties
+LibMain* LibMain::lib = nullptr;
 
 void RefreshTimer::timerCallback()  // what gets done on the periodic timer
 {
-    if (lib == nullptr)
+    if (LibMain::lib == nullptr)
         return;
-
-    // none of this is used currently. Updating softbuttons on an asynchronous basis is not worth the tradeoffs
-	// lib->scriptLog("Timer callback", 1);
-    
+   
     this->startTimer(1500);
 
-	if (syncState == 1)
+	if (syncState == 1 && LibMain::lib->Surface.showrackvariation)
     {
-        if (period)
-            lib->Notify(line1, " " + line2 + " ", midiport);
+        if (period) // we do this because if we just output the same Notify repeatedly it will not be displayed
+            LibMain::lib->Notify(line1, " " + line2 + " ", midiport);
         else
-			lib->Notify(line1, line2, midiport);
+            LibMain::lib->Notify(line1, line2, midiport);
 		period = !period;
 		// lib->scriptLog("Timer callback " + line1 + " " + midiport, 0);
     }
 
-    //std::string midimessage = LibMain::Controller.Instance[1].Softsend();
-    //if (midimessage.length() > 2) { lib->QueueMidi(midimessage); }
-    //lib->SendQueuedMidi(); // send any queued sysex messages
 }
 
 

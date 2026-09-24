@@ -211,7 +211,7 @@ public:
 	uint8_t BottomColor[BOTTOM_MODES] = { SLMKIII_ORANGE, SLMKIII_BLUE, SLMKIII_PURPLE, SLMKIII_MINT, SLMKIII_GREEN };
 	uint8_t BottomHalfColor[BOTTOM_MODES] = { SLMKIII_ORANGE_HALF, SLMKIII_BLUE_HALF, SLMKIII_PURPLE_HALF, SLMKIII_MINT_HALF, SLMKIII_GREEN_HALF };
 
-
+	bool showrackvariation = false;
 	int syncState = 0;  // are we connected to the surface?
 	int knob_resolution = 1000;
 	unsigned int keylights[128] = { 0 }; // used to track the state of the key lights on the keyboard from the zones layout

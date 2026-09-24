@@ -49,8 +49,10 @@ protected:
 
 public:
     // These must be here but no need to do anything unless you want extra behavior
-    LibMain(LibraryHandle handle) : GigPerformerAPI(handle)  {}
+    LibMain(LibraryHandle handle) : GigPerformerAPI(handle) { lib = this; }
     virtual ~LibMain() {}
+
+    static LibMain* lib;
 
     //  Global declarations and initializations
     //  [Global to the LibMain class, that is]

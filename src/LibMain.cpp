@@ -39,7 +39,7 @@ std::string  LibMain::GetPanelXML(int index)
 
 
 // List of menu items
-std::vector<std::string> menuNames = { "Re-initialize extention" };
+std::vector<std::string> menuNames = { "Re-initialize extention", "Toggle Rack/Song Display"};
 
 
 int LibMain::GetMenuCount()
@@ -75,7 +75,8 @@ void LibMain::InvokeMenu(int index)
             // OnRackspaceActivated();
             break;
         case 1:
-            scriptLog("Nothing here.", 0);
+            Surface.showrackvariation = !Surface.showrackvariation;
+            // scriptLog("Toggling Rack/Song display to " + std::to_string(Surface.showrackvariation), 0);
             break;
         case 2:
             getPluginList(widgetlist, false);

@@ -1,7 +1,7 @@
 @echo off
 
 :: Could be any of the Windows presets in CMakePresets.json
-set PRESET=windows-native
+set PRESET=windows-release
 
 :: Build configuration - could be "Debug" as well
 set BUILD_CONFIGURATION=Release

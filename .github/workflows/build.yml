@@ -23,7 +23,7 @@ jobs:
                       build_config: "Release"
                     - name: "Windows"
                       os: "windows-latest"
-                      cmake_preset: "windows-native"
+                      cmake_preset: "windows-release"
                       build_config: "Release"
         env:
             # Unfortunately, Ccache is not available yet for Windows and MSVC

@@ -61,6 +61,7 @@
         "common"
       ],
       "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release",
         "CMAKE_C_FLAGS": "/EHsc /W2",
         "CMAKE_CXX_FLAGS": "/EHsc /W2",
         "CMAKE_MSVC_RUNTIME_LIBRARY": "MultiThreadedDLL",
